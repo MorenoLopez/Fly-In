@@ -1,16 +1,28 @@
-.PHONY: install run debug clean lint lint-strict
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: horarivo <horarivo@student.42antananari    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/09/08 16:01:04 by horarivo          #+#    #+#              #
+#    Updated: 2026/09/08 16:10:46 by horarivo         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+
 
 install:
 	uv sync
 
 run:
-	uv run python -m src --map data/maps/test.txt --gui
+	uv run src/main.py --map data/maps/test.txt
 
 run-cli:
-	uv run python -m src --map data/maps/easy_linear.txt --no-gui
+	uv run src/main.py --map data/maps/test.txt
 
 debug:
-	uv run python -m pdb -m src --map data/maps/easy_linear.txt --no-gui
+	uv run python -m pdb -m src --map data/maps/test.txt
 
 clean:
 	rm -rf __pycache__ .mypy_cache .pytest_cache
@@ -25,3 +37,5 @@ lint:
 lint-strict:
 	flake8 src/
 	mypy src/ --strict
+
+.PHONY: install run debug clean lint lint-strict
