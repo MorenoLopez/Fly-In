@@ -1,0 +1,10 @@
+# Priority zone test - 3 drones
+nb_drones: 3
+start_hub: start 0 0 [color=green]
+end_hub: end 10 0 [color=yellow]
+hub: fast 5 5 [zone=priority color=green]
+hub: slow 5 -5 [zone=normal color=gray]
+connection: start-fast
+connection: start-slow
+connection: fast-end
+connection: slow-end

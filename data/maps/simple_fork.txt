@@ -1,0 +1,10 @@
+# Simple fork map - 3 drones
+nb_drones: 3
+start_hub: base 0 0 [color=green]
+end_hub: target 10 0 [color=yellow]
+hub: left 5 5 [zone=normal color=blue]
+hub: right 5 -5 [zone=normal color=red]
+connection: base-left
+connection: base-right
+connection: left-target
+connection: right-target

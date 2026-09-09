@@ -1,0 +1,23 @@
+# Maze nightmare - 8 drones
+nb_drones: 8
+start_hub: start 0 0 [color=green]
+end_hub: end 30 0 [color=yellow]
+hub: a 5 5 [zone=normal]
+hub: b 5 -5 [zone=normal]
+hub: c 10 5 [zone=restricted color=red]
+hub: d 10 -5 [zone=normal]
+hub: e 15 0 [zone=normal max_drones=3]
+hub: f 20 5 [zone=normal]
+hub: g 20 -5 [zone=normal]
+hub: h 25 0 [zone=restricted color=red]
+connection: start-a
+connection: start-b
+connection: a-c
+connection: b-d
+connection: c-e [max_link_capacity=2]
+connection: d-e [max_link_capacity=2]
+connection: e-f
+connection: e-g
+connection: f-h
+connection: g-h
+connection: h-end

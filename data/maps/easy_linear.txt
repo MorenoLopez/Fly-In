@@ -1,0 +1,9 @@
+# Easy linear map - 2 drones
+nb_drones: 2
+start_hub: hub 0 0 [color=green]
+end_hub: goal 10 10 [color=yellow]
+hub: roof1 3 4 [zone=normal color=blue]
+hub: roof2 6 2 [zone=normal color=blue]
+connection: hub-roof1
+connection: roof1-roof2
+connection: roof2-goal

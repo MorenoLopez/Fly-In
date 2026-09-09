@@ -1,0 +1,9 @@
+# Blocked zone test - 2 drones
+nb_drones: 2
+start_hub: start 0 0 [color=green]
+end_hub: end 10 0 [color=yellow]
+hub: wall 5 0 [zone=blocked color=gray]
+hub: detour 5 5 [zone=normal color=blue]
+connection: start-wall
+connection: start-detour
+connection: detour-end
