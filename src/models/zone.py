@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:28:02 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/08 16:43:16 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/09 11:51:10 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -22,7 +22,8 @@ class Zone:
                 y: int,
                 zone_type: str = "normal",
                 max_drones: int = 1,
-                color: Optional[str] = None):
+                color: Optional[str] = None
+                ) -> None:
         self.name = name
         self.x = x
         self.y = y

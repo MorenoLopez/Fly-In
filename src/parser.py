@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 17:56:45 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/09 11:26:53 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/09 11:51:31 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -19,7 +19,7 @@ from src.models.connection import Connection
 from src.models.network import Network
 
 
-_DRONE_PATTERN = re.compile(r"^(?:nb_drones:\s*)?(-?\d+)\s*$")
+_DRONE_PATTERN = re.compile(r"^(nb_drones:\s*)?(-?\d+)\s*$")
 _HUB_PATTERN = re.compile(
 	r"^(start_hub|end_hub|hub):\s+([^\s\-]+)\s+(-?\d+)\s+(-?\d+)\s*(\[.*\])?\s*$"
 )
