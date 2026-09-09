@@ -2,22 +2,22 @@
 # ########################################################################### #
 #   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
-#   main.py                                              :+:      :+:    :+:  #
+#   connection.py                                        :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
-#   Created: 2026/09/08 16:15:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/09 10:53:17 by horarivo           ###   ########.fr      #
+#   Created: 2026/09/08 16:45:35 by horarivo            #+#    #+#            #
+#   Updated: 2026/09/09 11:21:13 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
+from typing import Optional
+from src.models.zone import Zone
 
-import sys
-from parser import Parser
 
-def main():
-    parsedmap = Parser().parse(sys.argv[2])
-
-if __name__=="__main__":
-    main()
-    
+class Connection:
+    def __init__(self, zone1: Zone, zone2: Zone, capacity: int = 1):
+        self.zone1 = zone1
+        self.zone2 = zone2
+        self.capacity = capacity
+        

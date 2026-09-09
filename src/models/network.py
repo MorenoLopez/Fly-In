@@ -2,22 +2,27 @@
 # ########################################################################### #
 #   shebang: 1                                                                #
 #                                                          :::      ::::::::  #
-#   main.py                                              :+:      :+:    :+:  #
+#   network.py                                           :+:      :+:    :+:  #
 #                                                      +:+ +:+         +:+    #
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
-#   Created: 2026/09/08 16:15:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/09 10:53:17 by horarivo           ###   ########.fr      #
+#   Created: 2026/09/08 17:50:50 by horarivo            #+#    #+#            #
+#   Updated: 2026/09/09 08:10:39 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 
-import sys
-from parser import Parser
+from typing import Optional
+from src.models.drone import Drone
+from src.models.connection import Connection
+from src.models.zone import Zone
 
-def main():
-    parsedmap = Parser().parse(sys.argv[2])
 
-if __name__=="__main__":
-    main()
-    
+class Network:
+    def __init__(self) -> None:
+        self.zones: list[Zone]
+        self.connections: list[Connection]
+        self.drones: list[Drone]
+        self.start_zone: Optional[Zone]
+        self.end_zone: Optional[Zone]
+
