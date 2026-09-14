@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 17:56:45 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/09 11:55:33 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/14 20:17:43 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -19,14 +19,21 @@ from src.models.connection import Connection
 from src.models.network import Network
 
 
-_DRONE_PATTERN = re.compile(r"^nb_drones:\s*(-?\d+)\s*$")
+_DRONE_PATTERN = re.compile(
+	r"^nb_drones:\s*(-?\d+)\s*$"
+	)
+
 _HUB_PATTERN = re.compile(
 	r"^(start_hub|end_hub|hub):\s+([^\s\-]+)\s+(-?\d+)\s+(-?\d+)\s*(\[.*\])?\s*$"
-)
+	)
+
 _CONNECTION_PATTERN = re.compile(
 	r"^connection:\s+([^\s\-]+)-([^\s\-]+)\s*(\[.*\])?\s*$"
-)
-_METADATA_ITEM_PATTERN = re.compile(r"^(\w+)=(\S+)$")
+	)
+
+_METADATA_ITEM_PATTERN = re.compile(
+	r"^(\w+)=(\S+)$"
+	)
 
 _VALID_ZONE_TYPES = {"normal", "blocked", "restricted", "priority"}
 _HUB_METADATA_KEYS = {"zone", "color", "max_drones"}
@@ -125,6 +132,7 @@ class Parser:
 				raise ParseError(line_num, "end_hub is defined more than once")
 			self._end_name = name
 
+        
 		metadata = self._parse_metadata(meta_str, line_num, _HUB_METADATA_KEYS)
 
 		zone_type = metadata.get("zone", "normal")
@@ -146,6 +154,12 @@ class Parser:
 			max_drones=int(max_drones_str),
 			color=metadata.get("color"),
 		)
+
+		if prefix == "start_hub":
+			zone.is_start = True
+		elif prefix == "end_hub":
+			zone.is_end = True
+
 		self._zones[name] = zone
 
 	def _parse_connection_line(self, line: str, line_num: int) -> None:
