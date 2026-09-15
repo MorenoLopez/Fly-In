@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 15:56:36 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 16:19:11 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 16:28:34 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -42,7 +42,7 @@ _DRONE_COLORS = [
 ]
 
 
-class Visualizer(arcade.Window):
+class Visualizer(arcade.Window):  # type: ignore[misc]
     def __init__(
         self,
         network: Network,
