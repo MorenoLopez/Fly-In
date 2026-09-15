@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/09 14:41:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 11:16:48 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 11:41:48 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -94,11 +94,10 @@ class PathFinder:
                   end_zone: Zone,
                   start_turn: int
                   ) -> Optional[List[Tuple[Zone, int]]]:
-        max_turn = start_turn + len(self._network.zones)
+        max_turn = start_turn + len(self._network.zones) * 4
         
         priority_queue: List[Tuple[int, str, int]] = []
         heapq.heappush(priority_queue, (0, start_zone.name, start_turn))
-        cost, zone_name, turn = heapq.heappop(priority_queue)
 
         best_cost: Dict[tuple[str, int], int] = {}
         best_cost[(start_zone.name, start_turn)] = 0
@@ -154,6 +153,7 @@ class PathFinder:
                     best_cost, predecessor, priority_queue,
                     curr_zone, curr_turn, neighbor, arrival_turn, cost + move_cost
                 )
+        print(f"DEBUG: explored {len(best_cost)} states, best_cost keys: {list(best_cost.keys())[:20]}")
 
         return None
         
