@@ -7,38 +7,63 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:15:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 11:35:12 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 14:02:12 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 
 import sys
-from src.parser import Parser
-from src.algorithms import PathFinder, ReservationTable, RoutingManager
+import argparse
+
+from src.parser import Parser, ParseError
+from src.algorithms import PathFinder, ReservationTable, RoutingManager, RoutingError
+
+
+def parse_args() -> argparse.Namespace:
+    arg_parser = argparse.ArgumentParser(
+        description="Fly-in drone routing simulation"
+    )
+    arg_parser.add_argument(
+        "--map", required=True, help="Path to the map file to load"
+    )
+    arg_parser.add_argument(
+        "--capacity-info",
+        action="store_true",
+        help="Display per-turn capacity usage information",
+    )
+    return arg_parser.parse_args()
 
 
 def main() -> None:
-    parsedmap = Parser().parse(sys.argv[2])
+    args = parse_args()
+
+    try:
+        parsedmap = Parser().parse(args.map)
+    except (OSError, ParseError, ValueError) as e:
+        print(f"Error while parsing map file: {e}", file=sys.stderr)
+        sys.exit(1)
 
     assert parsedmap.start_zone is not None, "start_zone should never be None after parsing"
     assert parsedmap.end_zone is not None, "end_zone should never be None after parsing"
-
-    print(f"nb_drones: {len(parsedmap.drones)}")
-    print(f"zones: {[z.name for z in parsedmap.zones]}")
-    print(f"connections: {[(c.zone1.name, c.zone2.name) for c in parsedmap.connections]}")
-    print(f"start: {parsedmap.start_zone.name}, end: {parsedmap.end_zone.name}")
 
     pathfinder = PathFinder(parsedmap)
     reservation_table = ReservationTable()
     manager = RoutingManager(pathfinder, reservation_table)
 
-    routes = manager.route_all_drones(
-        parsedmap.drones, parsedmap.start_zone, parsedmap.end_zone
-    )
+    try:
+        routes = manager.route_all_drones(
+            parsedmap.drones, parsedmap.start_zone, parsedmap.end_zone
+        )
+    except RoutingError as e:
+        print(f"Error while routing drones: {e}", file=sys.stderr)
+        sys.exit(1)
 
     for drone_id, timed_path in routes.items():
         path_str = " -> ".join(f"{zone.name}@t{turn}" for zone, turn in timed_path)
         print(f"{drone_id}: {path_str}")
+
+    if args.capacity_info:
+        print("(--capacity-info not yet implemented)")
 
 
 if __name__ == "__main__":

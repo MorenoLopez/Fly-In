@@ -6,7 +6,7 @@
 #    By: horarivo <horarivo@student.42antananari    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/08 16:01:04 by horarivo          #+#    #+#              #
-#    Updated: 2026/09/15 11:52:13 by horarivo         ###   ########.fr        #
+#    Updated: 2026/09/15 14:02:43 by horarivo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ install:
 	uv sync
 
 run:
-	uv run src/main.py --map data/maps/hard_maze.txt
+	uv run src/main.py --map data/maps/easy_linear.txt
 
 run-cli:
 	uv run src/main.py --map data/maps/test.txt

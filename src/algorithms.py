@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/09 14:41:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 11:41:48 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 13:41:39 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -80,6 +80,22 @@ class ReservationTable:
                 self.reserve_connection(curr_zone.name, next_zone.name, curr_turn)
                 self.reserve_zone(next_zone.name, next_turn)
 
+    def zone_occupancy_at(self, turn: int) -> Dict[str, int]:
+        """Return {zone_name: count} for every zone occupied at the given turn."""
+        return {
+            zone_name: count
+            for (zone_name, t), count in self._zone_occupancy.items()
+            if t == turn
+        }
+
+    def edge_occupancy_at(self, turn: int) -> Dict[Tuple[str, str], int]:
+        """Return {canonical_edge: count} for every connection used at the given turn."""
+        return {
+            edge: count
+            for (edge, t), count in self._edge_occupancy.items()
+            if t == turn
+        }
+
 
 class PathFinder:
     def __init__(self, network: Network) -> None:
@@ -119,7 +135,6 @@ class PathFinder:
             if curr_turn >= max_turn:
                 continue
 
-            # --- Transition 1 : attendre sur place ---
             next_turn = curr_turn + 1
             if reservation_table.is_zone_available(curr_zone, next_turn):
                 self._relax(
@@ -127,7 +142,6 @@ class PathFinder:
                     curr_zone, curr_turn, curr_zone, next_turn, cost + 1
                 )
 
-            # --- Transition 2 : se déplacer vers chaque voisin connecté ---
             for connection in self._network.connections_of(curr_zone):
                 neighbor = connection.other_zone(curr_zone)
 
@@ -153,7 +167,6 @@ class PathFinder:
                     best_cost, predecessor, priority_queue,
                     curr_zone, curr_turn, neighbor, arrival_turn, cost + move_cost
                 )
-        print(f"DEBUG: explored {len(best_cost)} states, best_cost keys: {list(best_cost.keys())[:20]}")
 
         return None
         
