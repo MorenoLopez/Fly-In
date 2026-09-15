@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:45:35 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/09 11:50:38 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 10:40:03 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -20,4 +20,9 @@ class Connection:
         self.zone1 = zone1
         self.zone2 = zone2
         self.capacity = capacity
-        
+    
+
+    def other_zone(self, zone: Zone) -> Zone:
+        if zone.name == self.zone1.name:
+            return self.zone2
+        return self.zone1

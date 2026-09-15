@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:28:02 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/09 15:38:16 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 10:39:36 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -32,4 +32,3 @@ class Zone:
         self.color = color
         self.is_start: bool = False
         self.is_end: bool = False
-        

@@ -7,17 +7,20 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/09 14:41:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/09 15:39:27 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 11:16:48 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 
-from typing import Dict, Tuple, List
+from src.models.drone import Drone
+import heapq
+from src.models.network import Network
+from typing import Dict, Tuple, List, Optional
 from src.models.zone import Zone
+from src.models import network
 
 
 class ReservationTable:
-
     def __init__(self) -> None:
         self._zone_occupancy: Dict[Tuple[str, int], int] = {}
         self._edge_occupancy: Dict[Tuple[Tuple[str, str], int], int] = {}
@@ -76,3 +79,156 @@ class ReservationTable:
             else:
                 self.reserve_connection(curr_zone.name, next_zone.name, curr_turn)
                 self.reserve_zone(next_zone.name, next_turn)
+
+
+class PathFinder:
+    def __init__(self, network: Network) -> None:
+        self._network = network
+        self._network = network
+        self._zones_by_name: Dict[str, Zone] = {z.name: z for z in network.zones}
+
+
+    def find_path(self,
+                  reservation_table: ReservationTable,
+                  start_zone: Zone,
+                  end_zone: Zone,
+                  start_turn: int
+                  ) -> Optional[List[Tuple[Zone, int]]]:
+        max_turn = start_turn + len(self._network.zones)
+        
+        priority_queue: List[Tuple[int, str, int]] = []
+        heapq.heappush(priority_queue, (0, start_zone.name, start_turn))
+        cost, zone_name, turn = heapq.heappop(priority_queue)
+
+        best_cost: Dict[tuple[str, int], int] = {}
+        best_cost[(start_zone.name, start_turn)] = 0
+
+        predecessor: Dict[Tuple[str, int], Tuple[Zone, int]] = {}
+        
+        while priority_queue:
+            cost, curr_zone_name, curr_turn = heapq.heappop(priority_queue)
+            curr_zone = self._zones_by_name[curr_zone_name]
+
+            if curr_zone.name == end_zone.name:
+                return self._reconstruct_path(
+                    predecessor, curr_zone, curr_turn, start_zone, start_turn
+                )
+
+            if cost > best_cost.get((curr_zone.name, curr_turn), float("inf")):
+                continue
+
+            if curr_turn >= max_turn:
+                continue
+
+            # --- Transition 1 : attendre sur place ---
+            next_turn = curr_turn + 1
+            if reservation_table.is_zone_available(curr_zone, next_turn):
+                self._relax(
+                    best_cost, predecessor, priority_queue,
+                    curr_zone, curr_turn, curr_zone, next_turn, cost + 1
+                )
+
+            # --- Transition 2 : se déplacer vers chaque voisin connecté ---
+            for connection in self._network.connections_of(curr_zone):
+                neighbor = connection.other_zone(curr_zone)
+
+                if neighbor.zone_type == "blocked":
+                    continue
+
+                if neighbor.zone_type == "restricted":
+                    arrival_turn = curr_turn + 2
+                    move_cost = 2
+                else:
+                    arrival_turn = curr_turn + 1
+                    move_cost = 1
+
+                if not reservation_table.is_connection_available(
+                    curr_zone, neighbor, curr_turn, connection.capacity
+                ):
+                    continue
+
+                if not reservation_table.is_zone_available(neighbor, arrival_turn):
+                    continue
+
+                self._relax(
+                    best_cost, predecessor, priority_queue,
+                    curr_zone, curr_turn, neighbor, arrival_turn, cost + move_cost
+                )
+
+        return None
+        
+    def _relax(
+              self,
+              best_cost: Dict[Tuple[str, int], int],
+              predecessor: Dict[Tuple[str, int], Tuple[Zone, int]],
+              priority_queue: List[Tuple[int, str, int]],
+              from_zone: Zone,
+              from_turn: int,
+              to_zone: Zone,
+              to_turn: int,
+              new_cost: int,
+              ) -> None:
+        key = (to_zone.name, to_turn)
+        if new_cost < best_cost.get(key, float("inf")):
+            best_cost[key] = new_cost
+            predecessor[key] = (from_zone, from_turn)
+            heapq.heappush(priority_queue, (new_cost, to_zone.name, to_turn))
+
+    def _reconstruct_path(
+                          self,
+                          predecessor: Dict[Tuple[str, int], Tuple[Zone, int]],
+                          end_zone: Zone,
+                          end_turn: int,
+                          start_zone: Zone,
+                          start_turn: int,
+                          ) -> List[Tuple[Zone, int]]:
+        path: List[Tuple[Zone, int]] = [(end_zone, end_turn)]
+        curr_key = (end_zone.name, end_turn)
+
+        while curr_key != (start_zone.name, start_turn):
+            prev_zone, prev_turn = predecessor[curr_key]
+            path.append((prev_zone, prev_turn))
+            curr_key = (prev_zone.name, prev_turn)
+
+        path.reverse()
+        return path
+
+class RoutingError(Exception):
+    def __init__(self, drone_id: str, message: str) -> None:
+        self.drone_id = drone_id
+        self.message = message
+        super().__init__(f"Drone {drone_id}: {message}")
+
+
+class RoutingManager:
+
+    def __init__(self, pathfinder: PathFinder, reservation_table: ReservationTable) -> None:
+        self._pathfinder = pathfinder
+        self._reservation_table = reservation_table
+
+    def route_all_drones(
+        self,
+        drones: List[Drone],
+        start_zone: Zone,
+        end_zone: Zone,
+    ) -> Dict[str, List[Tuple[Zone, int]]]:
+
+        sorted_drones = sorted(drones, key=lambda d: d.id)
+
+        routes: Dict[str, List[Tuple[Zone, int]]] = {}
+
+        for drone in sorted_drones:
+            timed_path = self._pathfinder.find_path(
+                self._reservation_table,
+                start_zone,
+                end_zone,
+                start_turn=0,
+            )
+
+            if timed_path is None:
+                raise RoutingError(drone.id, "no valid path found")
+
+            self._reservation_table.reserve_path(timed_path)
+            routes[drone.id] = timed_path
+
+        return routes
