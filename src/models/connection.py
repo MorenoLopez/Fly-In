@@ -7,12 +7,11 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:45:35 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 10:40:03 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 15:36:50 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-from typing import Optional
-from src.models.zone import Zone
+from models.zone import Zone
 
 
 class Connection:
@@ -20,7 +19,6 @@ class Connection:
         self.zone1 = zone1
         self.zone2 = zone2
         self.capacity = capacity
-    
 
     def other_zone(self, zone: Zone) -> Zone:
         if zone.name == self.zone1.name:

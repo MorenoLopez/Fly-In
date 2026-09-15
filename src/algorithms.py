@@ -7,17 +7,16 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/09 14:41:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 13:41:39 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 15:28:20 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 
-from src.models.drone import Drone
+from models.drone import Drone
 import heapq
-from src.models.network import Network
+from models.network import Network
 from typing import Dict, Tuple, List, Optional
-from src.models.zone import Zone
-from src.models import network
+from models.zone import Zone
 
 
 class ReservationTable:
@@ -25,7 +24,9 @@ class ReservationTable:
         self._zone_occupancy: Dict[Tuple[str, int], int] = {}
         self._edge_occupancy: Dict[Tuple[Tuple[str, str], int], int] = {}
 
-    def _get_canonical_edge(self, zone_a_name: str, zone_b_name: str) -> Tuple[str, str]:
+    def _get_canonical_edge(
+        self, zone_a_name: str, zone_b_name: str
+    ) -> Tuple[str, str]:
         if zone_a_name < zone_b_name:
             return (zone_a_name, zone_b_name)
         return (zone_b_name, zone_a_name)
@@ -89,7 +90,9 @@ class ReservationTable:
         }
 
     def edge_occupancy_at(self, turn: int) -> Dict[Tuple[str, str], int]:
-        """Return {canonical_edge: count} for every connection used at the given turn."""
+        """
+        Return {canonical_edge: count} for every connection used at the given turn
+        """
         return {
             edge: count
             for (edge, t), count in self._edge_occupancy.items()
@@ -100,18 +103,17 @@ class ReservationTable:
 class PathFinder:
     def __init__(self, network: Network) -> None:
         self._network = network
-        self._network = network
         self._zones_by_name: Dict[str, Zone] = {z.name: z for z in network.zones}
 
-
-    def find_path(self,
-                  reservation_table: ReservationTable,
-                  start_zone: Zone,
-                  end_zone: Zone,
-                  start_turn: int
-                  ) -> Optional[List[Tuple[Zone, int]]]:
+    def find_path(
+        self,
+        reservation_table: ReservationTable,
+        start_zone: Zone,
+        end_zone: Zone,
+        start_turn: int,
+    ) -> Optional[List[Tuple[Zone, int]]]:
         max_turn = start_turn + len(self._network.zones) * 4
-        
+
         priority_queue: List[Tuple[int, str, int]] = []
         heapq.heappush(priority_queue, (0, start_zone.name, start_turn))
 
@@ -119,7 +121,7 @@ class PathFinder:
         best_cost[(start_zone.name, start_turn)] = 0
 
         predecessor: Dict[Tuple[str, int], Tuple[Zone, int]] = {}
-        
+
         while priority_queue:
             cost, curr_zone_name, curr_turn = heapq.heappop(priority_queue)
             curr_zone = self._zones_by_name[curr_zone_name]
@@ -138,8 +140,14 @@ class PathFinder:
             next_turn = curr_turn + 1
             if reservation_table.is_zone_available(curr_zone, next_turn):
                 self._relax(
-                    best_cost, predecessor, priority_queue,
-                    curr_zone, curr_turn, curr_zone, next_turn, cost + 1
+                    best_cost,
+                    predecessor,
+                    priority_queue,
+                    curr_zone,
+                    curr_turn,
+                    curr_zone,
+                    next_turn,
+                    cost + 1,
                 )
 
             for connection in self._network.connections_of(curr_zone):
@@ -164,23 +172,29 @@ class PathFinder:
                     continue
 
                 self._relax(
-                    best_cost, predecessor, priority_queue,
-                    curr_zone, curr_turn, neighbor, arrival_turn, cost + move_cost
+                    best_cost,
+                    predecessor,
+                    priority_queue,
+                    curr_zone,
+                    curr_turn,
+                    neighbor,
+                    arrival_turn,
+                    cost + move_cost,
                 )
 
         return None
-        
+
     def _relax(
-              self,
-              best_cost: Dict[Tuple[str, int], int],
-              predecessor: Dict[Tuple[str, int], Tuple[Zone, int]],
-              priority_queue: List[Tuple[int, str, int]],
-              from_zone: Zone,
-              from_turn: int,
-              to_zone: Zone,
-              to_turn: int,
-              new_cost: int,
-              ) -> None:
+        self,
+        best_cost: Dict[Tuple[str, int], int],
+        predecessor: Dict[Tuple[str, int], Tuple[Zone, int]],
+        priority_queue: List[Tuple[int, str, int]],
+        from_zone: Zone,
+        from_turn: int,
+        to_zone: Zone,
+        to_turn: int,
+        new_cost: int,
+    ) -> None:
         key = (to_zone.name, to_turn)
         if new_cost < best_cost.get(key, float("inf")):
             best_cost[key] = new_cost
@@ -188,13 +202,13 @@ class PathFinder:
             heapq.heappush(priority_queue, (new_cost, to_zone.name, to_turn))
 
     def _reconstruct_path(
-                          self,
-                          predecessor: Dict[Tuple[str, int], Tuple[Zone, int]],
-                          end_zone: Zone,
-                          end_turn: int,
-                          start_zone: Zone,
-                          start_turn: int,
-                          ) -> List[Tuple[Zone, int]]:
+        self,
+        predecessor: Dict[Tuple[str, int], Tuple[Zone, int]],
+        end_zone: Zone,
+        end_turn: int,
+        start_zone: Zone,
+        start_turn: int,
+    ) -> List[Tuple[Zone, int]]:
         path: List[Tuple[Zone, int]] = [(end_zone, end_turn)]
         curr_key = (end_zone.name, end_turn)
 
@@ -206,6 +220,7 @@ class PathFinder:
         path.reverse()
         return path
 
+
 class RoutingError(Exception):
     def __init__(self, drone_id: str, message: str) -> None:
         self.drone_id = drone_id
@@ -215,7 +230,9 @@ class RoutingError(Exception):
 
 class RoutingManager:
 
-    def __init__(self, pathfinder: PathFinder, reservation_table: ReservationTable) -> None:
+    def __init__(
+        self, pathfinder: PathFinder, reservation_table: ReservationTable
+    ) -> None:
         self._pathfinder = pathfinder
         self._reservation_table = reservation_table
 

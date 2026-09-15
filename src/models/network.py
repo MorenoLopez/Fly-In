@@ -7,15 +7,15 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 17:50:50 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 14:41:04 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 15:36:24 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 
 from typing import Optional, List
-from src.models.drone import Drone
-from src.models.connection import Connection
-from src.models.zone import Zone
+from models.drone import Drone
+from models.connection import Connection
+from models.zone import Zone
 
 
 class Network:
@@ -26,13 +26,13 @@ class Network:
         self.start_zone: Optional[Zone] = None
         self.end_zone: Optional[Zone] = None
 
-
     def connections_of(self, zone: Zone) -> List[Connection]:
-            return [
-                c for c in self.connections
-                if c.zone1.name == zone.name or c.zone2.name == zone.name
-            ]
-    
+        return [
+            c
+            for c in self.connections
+            if c.zone1.name == zone.name or c.zone2.name == zone.name
+        ]
+
     def get_zone_by_name(self, name: str) -> Zone:
         for zone in self.zones:
             if zone.name == name:

@@ -7,12 +7,12 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:14:47 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/09 11:20:48 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 15:29:47 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 
-from src.models.zone import Zone
+from models.zone import Zone
 
 
 class Drone:
@@ -20,5 +20,3 @@ class Drone:
         self.id = id
         self.curr_zone = curr_zone
         self.is_delivered: bool = False
-    
-    

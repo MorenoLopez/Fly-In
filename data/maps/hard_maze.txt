@@ -1,5 +1,5 @@
 # Maze nightmare - 8 drones
-nb_drones: 8
+nb_drones: 25
 start_hub: start 0 0 [color=green]
 end_hub: end 30 0 [color=yellow]
 hub: a 5 5 [zone=normal]

@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:28:02 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 10:39:36 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 15:36:33 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -16,14 +16,15 @@ from typing import Optional
 
 
 class Zone:
-    def __init__(self,
-                name: str,
-                x: int,
-                y: int,
-                zone_type: str = "normal",
-                max_drones: int = 1,
-                color: Optional[str] = None
-                ) -> None:
+    def __init__(
+        self,
+        name: str,
+        x: int,
+        y: int,
+        zone_type: str = "normal",
+        max_drones: int = 1,
+        color: Optional[str] = None,
+    ) -> None:
         self.name = name
         self.x = x
         self.y = y
