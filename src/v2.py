@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/16 07:45:52 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/16 08:57:46 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/16 14:06:33 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -21,10 +21,10 @@ from arcade.application import EVENT_HANDLE_STATE
 from models.network import Network
 from models.zone import Zone
 
-MARGIN = 80
-ZONE_RADIUS = 22
+MARGIN = 1
+ZONE_RADIUS = 32
 SECONDS_PER_TURN = 1.0
-DRONE_ANIM_FPS = 8
+DRONE_ANIM_FPS = 10
 MIN_ZOOM = 0.3
 MAX_ZOOM = 3.0
 ZOOM_STEP = 1.1
@@ -33,14 +33,18 @@ _ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
 
 _BG_PATH = os.path.join(_ASSETS_DIR, "bg.jpeg")
 
-_DRONE_SHEET_PATH = os.path.join(_ASSETS_DIR, "Idle2.png")
+_DRONE_SHEET_PATH = os.path.join(_ASSETS_DIR, "Idle.png")
 _DRONE_SHEET_COLUMNS = 4
 
-_PLATES_PATH = os.path.join(_ASSETS_DIR, "plates.png")
-_PLATES_COLS, _PLATES_ROWS = 3, 2
-
-_ITEMS_PATH = os.path.join(_ASSETS_DIR, "Items.png")
-_ITEMS_COLS, _ITEMS_ROWS = 5, 2
+_ZONES_DIR = os.path.join(_ASSETS_DIR, "zones")
+_ZONE_TEXTURE_FILES = {
+    "start": "start.png",
+    "end": "end.png",
+    "normal": "normal.png",
+    "restricted": "restricted.png",
+    "priority": "priority.png",
+    "blocked": "blocked.png",
+}
 
 _DEFAULT_COLOR = arcade.color.LIGHT_GRAY
 _ZONE_TYPE_OUTLINE = {
@@ -82,11 +86,8 @@ class Visualizer(arcade.Window):  # type: ignore[misc]
         self._drone_textures: List[arcade.Texture] = self._safe_load_spritesheet(
             _DRONE_SHEET_PATH, columns=_DRONE_SHEET_COLUMNS
         )
-        self._plates_textures: List[arcade.Texture] = self._safe_load_grid(
-            _PLATES_PATH, _PLATES_COLS, _PLATES_ROWS
-        )
-        self._items_textures: List[arcade.Texture] = self._safe_load_grid(
-            _ITEMS_PATH, _ITEMS_COLS, _ITEMS_ROWS
+        self._zone_textures: Dict[str, Optional[arcade.Texture]] = (
+            self._load_zone_textures()
         )
         self._anim_timer: float = 0.0
 
@@ -137,68 +138,29 @@ class Visualizer(arcade.Window):  # type: ignore[misc]
 
         return textures
 
-    def _safe_load_grid(self, path: str, cols: int, rows: int) -> List[arcade.Texture]:
-        """Load a spritesheet as a flat list of tile textures, row-major order.
+    def _load_zone_textures(self) -> Dict[str, Optional[arcade.Texture]]:
+        """Load one texture per zone category (start/end/type) from named files.
 
-        Tile index 0 is top-left, increasing left-to-right then top-to-bottom.
-        Returns an empty list (caller must handle the fallback) on failure.
+        Each category is expected to live at assets/zones/<category>.png.
+        A missing or invalid file logs a warning and maps to None; the
+        caller falls back to a plain colored circle for that category.
         """
-        try:
-            base_tex = arcade.load_texture(path)
-        except (FileNotFoundError, OSError) as e:
-            print(f"Warning: could not load spritesheet {path!r}: {e}")
-            return []
-
-        tile_w = base_tex.width // cols
-        tile_h = base_tex.height // rows
-        textures: List[arcade.Texture] = []
-
-        for row in range(rows):
-            for col in range(cols):
-                try:
-                    y_from_top = row * tile_h
-                    y_from_bottom = base_tex.height - y_from_top - tile_h
-                    tile = base_tex.crop(col * tile_w, y_from_bottom, tile_w, tile_h)
-                except (ValueError, IndexError) as e:
-                    print(
-                        f"Warning: could not extract tile ({col},{row}) "
-                        f"from {path!r}: {e}"
-                    )
-                    continue
-                textures.append(tile)
-
+        textures: Dict[str, Optional[arcade.Texture]] = {}
+        for category, filename in _ZONE_TEXTURE_FILES.items():
+            path = os.path.join(_ZONES_DIR, filename)
+            textures[category] = self._safe_load_texture(path)
         return textures
 
-    def _tile_or_none(
-        self, textures: List[arcade.Texture], index: int
-    ) -> Optional[arcade.Texture]:
-        """Safely fetch a tile by index, returning None if out of range."""
-        if 0 <= index < len(textures):
-            return textures[index]
-        return None
-
     def _zone_texture(self, zone: Zone) -> Optional[arcade.Texture]:
-        """Pick the tile texture representing a zone, based on start/end/type.
+        """Pick the texture representing a zone, based on start/end/type.
 
-        Priority: start/end flags override zone_type. Falls back to None
-        (caller draws a plain circle) if the relevant spritesheet failed
-        to load or the tile index is out of range.
+        Priority: start/end flags override zone_type.
         """
         if zone.is_start:
-            return self._tile_or_none(self._plates_textures, 0)
+            return self._zone_textures.get("start")
         if zone.is_end:
-            return self._tile_or_none(self._plates_textures, 1)
-
-        if zone.zone_type == "restricted":
-            return self._tile_or_none(self._plates_textures, 2)
-        if zone.zone_type == "normal":
-            return self._tile_or_none(self._plates_textures, 4)
-        if zone.zone_type == "priority":
-            return self._tile_or_none(self._items_textures, 4)
-        if zone.zone_type == "blocked":
-            return self._tile_or_none(self._items_textures, 5)
-
-        return None
+            return self._zone_textures.get("end")
+        return self._zone_textures.get(zone.zone_type)
 
     def _compute_screen_positions(self) -> Dict[str, Tuple[float, float]]:
         """
@@ -281,7 +243,7 @@ class Visualizer(arcade.Window):  # type: ignore[misc]
             arcade.draw_line(x1, y1, x2, y2, arcade.color.LIGHT_STEEL_BLUE, 2)
 
     def _draw_zones(self) -> None:
-        """Draw every zone as its assigned tile texture, or a fallback circle."""
+        """Draw every zone as its assigned texture, or a fallback colored circle."""
         radius = ZONE_RADIUS * self._zoom
         for zone in self._network.zones:
             x, y = self._to_screen(*self._positions[zone.name])
@@ -313,7 +275,9 @@ class Visualizer(arcade.Window):  # type: ignore[misc]
             )
 
     def _draw_drones(self) -> None:
-        """Draw every drone at its current interpolated, camera-transformed position."""
+        """
+        Draw every drone at its current interpolated, camera-transformed position
+        """
         current_drone_tex: Optional[arcade.Texture] = None
         if self._drone_textures:
             frame_idx = int(self._anim_timer * DRONE_ANIM_FPS) % len(
@@ -322,16 +286,18 @@ class Visualizer(arcade.Window):  # type: ignore[misc]
             current_drone_tex = self._drone_textures[frame_idx]
 
         for drone_id in sorted(self._routes.keys()):
-            x, y = self._to_screen(*self._drone_screen_position(drone_id))
+            base_x, base_y = self._drone_screen_position(drone_id)
+            x, y = self._to_screen(base_x, base_y)
+            y += ZONE_RADIUS * self._zoom * 0.6
 
             if current_drone_tex is not None:
-                w = current_drone_tex.width * 1.5 * self._zoom
-                h = current_drone_tex.height * 1.5 * self._zoom
+                w = current_drone_tex.width * 0.9 * self._zoom
+                h = current_drone_tex.height * 0.9 * self._zoom
                 arcade.draw_texture_rect(current_drone_tex, arcade.XYWH(x, y, w, h))
                 label_y = y - h / 2 - 14
             else:
                 arcade.draw_circle_filled(
-                    x, y, 10 * self._zoom, arcade.color.ELECTRIC_CYAN
+                    x, y, 6 * self._zoom, arcade.color.ELECTRIC_CYAN
                 )
                 label_y = y - 24
 
