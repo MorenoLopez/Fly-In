@@ -6,7 +6,7 @@
 #    By: horarivo <horarivo@student.42antananari    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/08 16:01:04 by horarivo          #+#    #+#              #
-#    Updated: 2026/09/16 16:40:00 by horarivo         ###   ########.fr        #
+#    Updated: 2026/09/16 16:51:46 by horarivo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ run-cli:
 	uv run src/main.py --map data/maps/test.txt
 
 debug:
-	uv run python -m pdb -m src/main.py --map data/maps/test.txt
+	uv run python -m pdb src/main.py --map data/maps/test.txt
 
 clean:
 	rm -rf __pycache__ .mypy_cache .pytest_cache
