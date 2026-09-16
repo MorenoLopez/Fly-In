@@ -7,13 +7,13 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:15:10 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 15:39:53 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/16 15:35:22 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-from src.models.zone import Zone
-from src.models.drone import Drone
-from src.models.connection import Connection
-from src.models.network import Network
+from models.zone import Zone
+from models.drone import Drone
+from models.connection import Connection
+from models.network import Network
 
 __all__ = ["Zone", "Drone", "Connection", "Network"]

@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 17:56:45 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/16 15:00:18 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/16 15:13:23 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -33,7 +33,7 @@ _METADATA_ITEM_PATTERN = re.compile(r"^(\w+)=(\S+)$")
 
 _VALID_ZONE_TYPES = {"normal", "blocked", "restricted", "priority"}
 _HUB_METADATA_KEYS = {"zone", "color", "max_drones"}
-_CONNECTION_METADATA_KEYS = {"max_capacity"}
+_CONNECTION_METADATA_KEYS = {"max_link_capacity"}
 
 
 class ParseError(Exception):
@@ -198,7 +198,7 @@ class Parser:
         metadata = self._parse_metadata(
             meta_str, line_num, _CONNECTION_METADATA_KEYS
         )
-        cap_str = metadata.get("max_capacity", "1")
+        cap_str = metadata.get("max_link_capacity", "1")
         if not cap_str.isdigit() or int(cap_str) <= 0:
             raise ParseError(
                 line_num,

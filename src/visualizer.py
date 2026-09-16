@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/16 07:45:52 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/16 15:03:34 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/16 16:21:44 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -21,7 +21,7 @@ from arcade.application import EVENT_HANDLE_STATE
 from models.network import Network
 from models.zone import Zone
 
-MARGIN = 1
+MARGIN = 50
 ZONE_RADIUS = 32
 SECONDS_PER_TURN = 1.0
 DRONE_ANIM_FPS = 8

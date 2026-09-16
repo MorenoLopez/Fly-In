@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:24:19 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/16 15:01:27 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/16 16:38:39 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -29,9 +29,10 @@ class SimulationEngine:
         self._network = network
         self._reservation_table = reservation_table
 
-    def generate_turns(self, verbose: bool = False) -> List[str]:
+    def generate_turns(self) -> List[str]:
         turn_actions = self._build_turn_actions()
         max_turn = max(turn_actions.keys())
+        verbose: bool = False
 
         lines = []
         for turn in range(1, max_turn + 1):
