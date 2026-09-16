@@ -1,0 +1,81 @@
+nb_drones: 25
+
+start_hub: base 0 0 [color=green]
+end_hub: target 20 10 [color=yellow]
+
+hub: junctionA 2 1 [zone=normal color=blue max_drones=3]
+hub: junctionB 2 -1 [zone=normal color=blue max_drones=2]
+hub: junctionC 4 0 [zone=priority color=cyan max_drones=2]
+hub: junctionD 4 3 [zone=normal color=blue max_drones=2]
+hub: junctionE 4 -3 [zone=normal color=blue max_drones=2]
+
+hub: corridor1 6 1 [zone=restricted color=red max_drones=1]
+hub: corridor2 6 -1 [zone=restricted color=red max_drones=1]
+hub: corridor3 6 4 [zone=normal color=blue max_drones=2]
+hub: corridor4 6 -4 [zone=normal color=blue max_drones=2]
+
+hub: deadzone 5 6 [zone=blocked color=gray]
+
+hub: hubF 8 1 [zone=normal color=blue max_drones=3]
+hub: hubG 8 -1 [zone=normal color=blue max_drones=3]
+hub: hubH 8 4 [zone=priority color=cyan max_drones=2]
+hub: hubI 8 -4 [zone=priority color=cyan max_drones=2]
+
+hub: mazeIn 10 0 [zone=normal color=purple max_drones=2]
+hub: maze1 11 2 [zone=normal color=purple max_drones=1]
+hub: maze2 12 2 [zone=restricted color=red max_drones=1]
+hub: maze3 12 0 [zone=normal color=purple max_drones=1]
+hub: maze4 12 -2 [zone=restricted color=red max_drones=1]
+hub: maze5 13 0 [zone=normal color=purple max_drones=1]
+hub: mazeOut 14 0 [zone=normal color=purple max_drones=2]
+
+hub: loopA 14 3 [zone=normal color=blue max_drones=2]
+hub: loopB 16 5 [zone=priority color=cyan max_drones=2]
+hub: loopC 18 3 [zone=normal color=blue max_drones=2]
+hub: loopD 16 1 [zone=normal color=blue max_drones=2]
+
+hub: finalCorridor1 16 -2 [zone=restricted color=red max_drones=1]
+hub: finalCorridor2 18 -1 [zone=normal color=blue max_drones=2]
+
+hub: approach1 18 8 [zone=normal color=blue max_drones=3]
+hub: approach2 18 12 [zone=normal color=blue max_drones=3]
+
+connection: base-junctionA
+connection: base-junctionB
+connection: junctionA-junctionC
+connection: junctionB-junctionC
+connection: junctionC-junctionD
+connection: junctionC-junctionE
+connection: junctionD-corridor1
+connection: junctionE-corridor2
+connection: junctionD-corridor3
+connection: junctionE-corridor4
+connection: corridor3-deadzone
+connection: corridor1-hubF [max_link_capacity=2]
+connection: corridor2-hubG [max_link_capacity=2]
+connection: corridor3-hubH
+connection: corridor4-hubI
+connection: hubF-mazeIn
+connection: hubG-mazeIn
+connection: hubH-loopA
+connection: hubI-finalCorridor1
+connection: mazeIn-maze1
+connection: mazeIn-maze3
+connection: maze1-maze2
+connection: maze2-mazeOut
+connection: maze3-maze4
+connection: maze3-maze5
+connection: maze4-finalCorridor1
+connection: maze5-mazeOut
+connection: mazeOut-loopA
+connection: mazeOut-loopD
+connection: loopA-loopB
+connection: loopB-loopC
+connection: loopC-target
+connection: loopD-loopC
+connection: loopD-finalCorridor2
+connection: finalCorridor1-finalCorridor2
+connection: finalCorridor2-target
+connection: loopB-approach1
+connection: approach1-approach2
+connection: approach2-target
