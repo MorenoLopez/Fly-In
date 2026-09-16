@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:15:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 16:13:44 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/15 17:19:31 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -64,7 +64,7 @@ def main() -> None:
         print(line)
 
     if args.gui:
-        from visualizer import run_visualizer
+        from v2 import run_visualizer
         run_visualizer(parsedmap, routes)
     else:
         engine = SimulationEngine(routes, parsedmap, reservation_table)
