@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 17:50:50 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 15:36:24 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/16 14:56:27 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -39,9 +39,13 @@ class Network:
                 return zone
         raise KeyError(f"No zone named {name!r} in network")
 
-    def get_connection_by_names(self, zone_a_name: str, zone_b_name: str) -> Connection:
+    def get_connection_by_names(
+        self, zone_a_name: str, zone_b_name: str
+    ) -> Connection:
         for connection in self.connections:
             names = {connection.zone1.name, connection.zone2.name}
             if names == {zone_a_name, zone_b_name}:
                 return connection
-        raise KeyError(f"No connection between {zone_a_name!r} and {zone_b_name!r}")
+        raise KeyError(
+            f"No connection between {zone_a_name!r} and {zone_b_name!r}"
+        )

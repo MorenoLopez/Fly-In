@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 17:56:45 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 15:37:09 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/16 15:00:18 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -21,7 +21,8 @@ from models.network import Network
 _DRONE_PATTERN = re.compile(r"^nb_drones:\s*(-?\d+)\s*$")
 
 _HUB_PATTERN = re.compile(
-    r"^(start_hub|end_hub|hub):\s+([^\s\-]+)\s+(-?\d+)\s+(-?\d+)\s*(\[.*\])?\s*$"
+    r"^(start_hub|end_hub|hub):\s+([^\s\-]+)\s+(-?\d+)\s+(-?\d+)"
+    r"\s*(\[.*\])?\s*$"
 )
 
 _CONNECTION_PATTERN = re.compile(
@@ -32,7 +33,7 @@ _METADATA_ITEM_PATTERN = re.compile(r"^(\w+)=(\S+)$")
 
 _VALID_ZONE_TYPES = {"normal", "blocked", "restricted", "priority"}
 _HUB_METADATA_KEYS = {"zone", "color", "max_drones"}
-_CONNECTION_METADATA_KEYS = {"max_link_capacity"}
+_CONNECTION_METADATA_KEYS = {"max_capacity"}
 
 
 class ParseError(Exception):
@@ -84,7 +85,9 @@ class Parser:
 
         inner = meta_str.strip()
         if not (inner.startswith("[") and inner.endswith("]")):
-            raise ParseError(line_num, f"malformed metadata block: {meta_str!r}")
+            raise ParseError(
+                line_num, f"malformed metadata block: {meta_str!r}"
+            )
 
         inner = inner[1:-1].strip()
         if not inner:
@@ -94,7 +97,9 @@ class Parser:
         for token in inner.split():
             match = _METADATA_ITEM_PATTERN.match(token)
             if match is None:
-                raise ParseError(line_num, f"malformed metadata entry: {token!r}")
+                raise ParseError(
+                    line_num, f"malformed metadata entry: {token!r}"
+                )
 
             key, value = match.group(1), match.group(2)
             if key not in allowed_keys:
@@ -123,7 +128,9 @@ class Parser:
 
         if prefix == "start_hub":
             if self._start_name is not None:
-                raise ParseError(line_num, "start_hub is defined more than once")
+                raise ParseError(
+                    line_num, "start_hub is defined more than once"
+                )
             self._start_name = name
         elif prefix == "end_hub":
             if self._end_name is not None:
@@ -136,11 +143,11 @@ class Parser:
         if zone_type not in _VALID_ZONE_TYPES:
             raise ParseError(line_num, f"invalid zone type: {zone_type!r}")
 
-        max_drones_str = metadata.get("max_drones", "1")
-        if not max_drones_str.isdigit() or int(max_drones_str) <= 0:
+        max_D_str = metadata.get("max_drones", "1")
+        if not max_D_str.isdigit() or int(max_D_str) <= 0:
             raise ParseError(
                 line_num,
-                f"max_drones must be a positive integer, got {max_drones_str!r}",
+                f"max_drones must be a positive integer, got {max_D_str!r}",
             )
 
         zone = Zone(
@@ -148,7 +155,7 @@ class Parser:
             x=int(x_str),
             y=int(y_str),
             zone_type=zone_type,
-            max_drones=int(max_drones_str),
+            max_drones=int(max_D_str),
             color=metadata.get("color"),
         )
 
@@ -183,20 +190,23 @@ class Parser:
         key = (name_a, name_b)
         if key in self._connection_keys:
             raise ParseError(
-                line_num, f"duplicate connection between {name1!r} and {name2!r}"
+                line_num,
+                f"duplicate connection between {name1!r} and {name2!r}",
             )
         self._connection_keys.add(key)
 
-        metadata = self._parse_metadata(meta_str, line_num, _CONNECTION_METADATA_KEYS)
-        capacity_str = metadata.get("max_link_capacity", "1")
-        if not capacity_str.isdigit() or int(capacity_str) <= 0:
+        metadata = self._parse_metadata(
+            meta_str, line_num, _CONNECTION_METADATA_KEYS
+        )
+        cap_str = metadata.get("max_capacity", "1")
+        if not cap_str.isdigit() or int(cap_str) <= 0:
             raise ParseError(
                 line_num,
-                f"max_link_capacity must be a positive integer, got {capacity_str!r}",
+                f"max_capacity must be a positive integer, got {cap_str!r}",
             )
 
         connection = Connection(
-            self._zones[name1], self._zones[name2], int(capacity_str)
+            self._zones[name1], self._zones[name2], int(cap_str)
         )
         self._connections.append(connection)
 
@@ -209,7 +219,8 @@ class Parser:
         if not self._seen_first_line:
             if not line.startswith("nb_drones:"):
                 raise ParseError(
-                    line_num, "the first line of the map file must define nb_drones"
+                    line_num,
+                    "the first line of the map file must define nb_drones",
                 )
             self._seen_first_line = True
 
@@ -224,7 +235,9 @@ class Parser:
         elif line.startswith("connection:"):
             self._parse_connection_line(line, line_num)
         else:
-            raise ParseError(line_num, f"unrecognized line format: {raw_line!r}")
+            raise ParseError(
+                line_num, f"unrecognized line format: {raw_line!r}"
+            )
 
     def parse(self, file_path: str) -> Network:
         self._reset()
@@ -251,7 +264,9 @@ class Parser:
 
         start_zone = self._zones[self._start_name]
         end_zone = self._zones[self._end_name]
-        drones = [Drone(f"D{i + 1}", start_zone) for i in range(self._nb_drones)]
+        drones = [
+            Drone(f"D{i + 1}", start_zone) for i in range(self._nb_drones)
+        ]
 
         network = Network()
         network.zones = list(self._zones.values())

@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/09 14:41:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 15:28:20 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/16 14:51:54 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -56,7 +56,9 @@ class ReservationTable:
         key = (zone_name, turn)
         self._zone_occupancy[key] = self._zone_occupancy.get(key, 0) + 1
 
-    def reserve_connection(self, zone_a_name: str, zone_b_name: str, turn: int) -> None:
+    def reserve_connection(
+        self, zone_a_name: str, zone_b_name: str, turn: int
+    ) -> None:
         edge = self._get_canonical_edge(zone_a_name, zone_b_name)
         key = (edge, turn)
         self._edge_occupancy[key] = self._edge_occupancy.get(key, 0) + 1
@@ -73,16 +75,24 @@ class ReservationTable:
                 self.reserve_zone(curr_zone.name, next_turn)
 
             elif next_zone.zone_type == "restricted":
-                self.reserve_connection(curr_zone.name, next_zone.name, curr_turn)
-                self.reserve_connection(curr_zone.name, next_zone.name, curr_turn + 1)
+                self.reserve_connection(
+                    curr_zone.name, next_zone.name, curr_turn
+                )
+                self.reserve_connection(
+                    curr_zone.name, next_zone.name, curr_turn + 1
+                )
                 self.reserve_zone(next_zone.name, next_turn)
 
             else:
-                self.reserve_connection(curr_zone.name, next_zone.name, curr_turn)
+                self.reserve_connection(
+                    curr_zone.name, next_zone.name, curr_turn
+                )
                 self.reserve_zone(next_zone.name, next_turn)
 
     def zone_occupancy_at(self, turn: int) -> Dict[str, int]:
-        """Return {zone_name: count} for every zone occupied at the given turn."""
+        """
+        Return {zone_name: count} for every zone occupied at the given turn
+        """
         return {
             zone_name: count
             for (zone_name, t), count in self._zone_occupancy.items()
@@ -91,7 +101,7 @@ class ReservationTable:
 
     def edge_occupancy_at(self, turn: int) -> Dict[Tuple[str, str], int]:
         """
-        Return {canonical_edge: count} for every connection used at the given turn
+        Return {canonical_edge: count} for every conn used at the given turn
         """
         return {
             edge: count
@@ -103,7 +113,9 @@ class ReservationTable:
 class PathFinder:
     def __init__(self, network: Network) -> None:
         self._network = network
-        self._zones_by_name: Dict[str, Zone] = {z.name: z for z in network.zones}
+        self._zones_by_name: Dict[str, Zone] = {
+            z.name: z for z in network.zones
+        }
 
     def find_path(
         self,
@@ -168,7 +180,9 @@ class PathFinder:
                 ):
                     continue
 
-                if not reservation_table.is_zone_available(neighbor, arrival_turn):
+                if not reservation_table.is_zone_available(
+                    neighbor, arrival_turn
+                ):
                     continue
 
                 self._relax(

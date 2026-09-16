@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:24:19 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/15 15:37:50 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/16 15:01:27 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -76,7 +76,9 @@ class SimulationEngine:
         zone_counts = self._reservation_table.zone_occupancy_at(turn)
         for zone_name, count in zone_counts.items():
             zone = self._network.get_zone_by_name(zone_name)
-            lines.append(f"  Zone {zone_name}: {count}/{zone.max_drones} drones")
+            lines.append(
+                f"  Zone {zone_name}: {count}/{zone.max_drones} drones"
+            )
 
         edge_counts = self._reservation_table.edge_occupancy_at(turn)
         for (zone_a, zone_b), count in edge_counts.items():
