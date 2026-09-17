@@ -7,9 +7,10 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 17:56:45 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/16 15:13:23 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/16 16:57:45 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
+
 
 import re
 from typing import Dict, Optional, Set, List
@@ -17,6 +18,7 @@ from models.zone import Zone
 from models.drone import Drone
 from models.connection import Connection
 from models.network import Network
+
 
 _DRONE_PATTERN = re.compile(r"^nb_drones:\s*(-?\d+)\s*$")
 
