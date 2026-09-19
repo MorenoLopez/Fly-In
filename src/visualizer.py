@@ -21,7 +21,7 @@ from arcade.application import EVENT_HANDLE_STATE
 from models.network import Network
 from models.zone import Zone
 
-MARGIN = 50
+MARGIN = 90
 ZONE_RADIUS = 32
 SECONDS_PER_TURN = 1.0
 DRONE_ANIM_FPS = 8
