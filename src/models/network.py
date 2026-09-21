@@ -13,9 +13,9 @@
 
 """The full network of zones, connections and drones."""
 
-from typing import Optional, List
-from models.drone import Drone
+
 from models.connection import Connection
+from models.drone import Drone
 from models.zone import Zone
 
 
@@ -27,10 +27,10 @@ class Network:
         self.zones: list[Zone] = []
         self.connections: list[Connection] = []
         self.drones: list[Drone] = []
-        self.start_zone: Optional[Zone] = None
-        self.end_zone: Optional[Zone] = None
+        self.start_zone: Zone | None = None
+        self.end_zone: Zone | None = None
 
-    def connections_of(self, zone: Zone) -> List[Connection]:
+    def connections_of(self, zone: Zone) -> list[Connection]:
         """Return all connections attached to the given zone."""
         return [
             c

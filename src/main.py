@@ -14,16 +14,17 @@
 
 """Entry point for the Fly-in drone routing simulation."""
 
-import sys
 import argparse
-from simulate import SimulationEngine
-from parser import Parser, ParseError
+import sys
+
 from algorithms import (
     PathFinder,
     ReservationTable,
-    RoutingManager,
     RoutingError,
+    RoutingManager,
 )
+from parser import ParseError, Parser
+from simulate import SimulationEngine
 
 
 def parse_args() -> argparse.Namespace:

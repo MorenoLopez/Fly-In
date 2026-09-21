@@ -15,9 +15,10 @@
 """Graphical (Arcade-based) visualizer for the Fly-in drone simulation."""
 
 import os
-from typing import Dict, List, Tuple, Optional
+
 import arcade
 from arcade.application import EVENT_HANDLE_STATE
+
 from models.network import Network
 from models.zone import Zone
 
@@ -63,7 +64,7 @@ class Visualizer(arcade.Window):
     def __init__(
         self,
         network: Network,
-        routes: Dict[str, List[Tuple[Zone, int]]],
+        routes: dict[str, list[tuple[Zone, int]]],
     ) -> None:
         """Build the visualizer window, load assets and precompute layout.
 
@@ -86,20 +87,20 @@ class Visualizer(arcade.Window):
             (t for path in routes.values() for _, t in path), default=0
         )
 
-        self._bg_texture: Optional[arcade.Texture] = self._safe_load_texture(
+        self._bg_texture: arcade.Texture | None = self._safe_load_texture(
             _BG_PATH
         )
-        self._drone_textures: List[arcade.Texture] = (
+        self._drone_textures: list[arcade.Texture] = (
             self._safe_load_spritesheet(
                 _DRONE_SHEET_PATH, columns=_DRONE_SHEET_COLUMNS
             )
         )
-        self._zone_textures: Dict[str, Optional[arcade.Texture]] = (
+        self._zone_textures: dict[str, arcade.Texture | None] = (
             self._load_zone_textures()
         )
         self._anim_timer: float = 0.0
 
-        self._positions: Dict[str, Tuple[float, float]] = (
+        self._positions: dict[str, tuple[float, float]] = (
             self._compute_screen_positions()
         )
 
@@ -112,10 +113,10 @@ class Visualizer(arcade.Window):
         self._zoom: float = 1.0
         self._dragging: bool = False
 
-        self._zone_text_objects: Dict[str, arcade.Text] = (
+        self._zone_text_objects: dict[str, arcade.Text] = (
             self._build_zone_text_objects()
         )
-        self._drone_text_objects: Dict[str, arcade.Text] = (
+        self._drone_text_objects: dict[str, arcade.Text] = (
             self._build_drone_text_objects()
         )
         self._hud_turn_text = arcade.Text(
@@ -137,7 +138,7 @@ class Visualizer(arcade.Window):
             font_name="Consolas",
         )
 
-    def _safe_load_texture(self, path: str) -> Optional[arcade.Texture]:
+    def _safe_load_texture(self, path: str) -> arcade.Texture | None:
         """
         Load a texture from disk, returning None (with a warning) on failure
         ."""
@@ -149,7 +150,7 @@ class Visualizer(arcade.Window):
 
     def _safe_load_spritesheet(
         self, path: str, columns: int
-    ) -> List[arcade.Texture]:
+    ) -> list[arcade.Texture]:
         """Load a horizontal spritesheet as a list of frame textures.
 
         Falls back to an empty list (drones drawn as plain circles) if the
@@ -163,7 +164,7 @@ class Visualizer(arcade.Window):
 
         frame_w = base_tex.width // columns
         frame_h = base_tex.height
-        textures: List[arcade.Texture] = []
+        textures: list[arcade.Texture] = []
 
         for col in range(columns):
             try:
@@ -177,20 +178,20 @@ class Visualizer(arcade.Window):
 
         return textures
 
-    def _load_zone_textures(self) -> Dict[str, Optional[arcade.Texture]]:
+    def _load_zone_textures(self) -> dict[str, arcade.Texture | None]:
         """Load one texture per zone category from named files
 
         Each category is expected to live at assets/zones/<category>.png.
         A missing or invalid file logs a warning and maps to None; the
         caller falls back to a plain colored circle for that category.
         ."""
-        textures: Dict[str, Optional[arcade.Texture]] = {}
+        textures: dict[str, arcade.Texture | None] = {}
         for category, filename in _ZONE_TEXTURE_FILES.items():
             path = os.path.join(_ZONES_DIR, filename)
             textures[category] = self._safe_load_texture(path)
         return textures
 
-    def _zone_texture(self, zone: Zone) -> Optional[arcade.Texture]:
+    def _zone_texture(self, zone: Zone) -> arcade.Texture | None:
         """Pick the texture representing a zone, based on start/end/type.
 
         Priority: start/end flags override zone_type.
@@ -201,11 +202,11 @@ class Visualizer(arcade.Window):
             return self._zone_textures.get("end")
         return self._zone_textures.get(zone.zone_type)
 
-    def _build_zone_text_objects(self) -> Dict[str, arcade.Text]:
+    def _build_zone_text_objects(self) -> dict[str, arcade.Text]:
         """
         Create one reusable Text object per zone name (position updates /frame)
         ."""
-        texts: Dict[str, arcade.Text] = {}
+        texts: dict[str, arcade.Text] = {}
         for zone in self._network.zones:
             texts[zone.name] = arcade.Text(
                 zone.name,
@@ -218,11 +219,11 @@ class Visualizer(arcade.Window):
             )
         return texts
 
-    def _build_drone_text_objects(self) -> Dict[str, arcade.Text]:
+    def _build_drone_text_objects(self) -> dict[str, arcade.Text]:
         """
         Create one reusable Text object per drone id (position updates /frame)
         ."""
-        texts: Dict[str, arcade.Text] = {}
+        texts: dict[str, arcade.Text] = {}
         for drone_id in self._routes.keys():
             texts[drone_id] = arcade.Text(
                 drone_id,
@@ -235,7 +236,7 @@ class Visualizer(arcade.Window):
             )
         return texts
 
-    def _compute_screen_positions(self) -> Dict[str, Tuple[float, float]]:
+    def _compute_screen_positions(self) -> dict[str, tuple[float, float]]:
         """
         Map each zone's (x, y) map coordinate to a base screen position
         ."""
@@ -250,7 +251,7 @@ class Visualizer(arcade.Window):
         usable_w = self.width - 2 * MARGIN
         usable_h = self.height - 2 * MARGIN
 
-        positions: Dict[str, Tuple[float, float]] = {}
+        positions: dict[str, tuple[float, float]] = {}
         for zone in self._network.zones:
             sx = MARGIN + (zone.x - min_x) / span_x * usable_w
             sy = MARGIN + (zone.y - min_y) / span_y * usable_h
@@ -258,7 +259,7 @@ class Visualizer(arcade.Window):
 
         return positions
 
-    def _to_screen(self, x: float, y: float) -> Tuple[float, float]:
+    def _to_screen(self, x: float, y: float) -> tuple[float, float]:
         """Apply the current camera pan and zoom to a base layout position."""
         return (
             x * self._zoom + self._camera_offset_x,
@@ -271,7 +272,7 @@ class Visualizer(arcade.Window):
         if hasattr(self, "_network"):
             self._positions = self._compute_screen_positions()
 
-    def _drone_screen_position(self, drone_id: str) -> Tuple[float, float]:
+    def _drone_screen_position(self, drone_id: str) -> tuple[float, float]:
         """Return the interpolated base (pre-camera) position of a drone.
 
         Finds the (zone, turn) segment of the drone's timed path that
@@ -354,7 +355,7 @@ class Visualizer(arcade.Window):
         """
         Draw every drone at its current interpolated, cam-transformed position
         ."""
-        current_drone_tex: Optional[arcade.Texture] = None
+        current_drone_tex: arcade.Texture | None = None
         if self._drone_textures:
             frame_idx = int(self._anim_timer * DRONE_ANIM_FPS) % len(
                 self._drone_textures
@@ -535,7 +536,7 @@ class Visualizer(arcade.Window):
 
 
 def run_visualizer(
-    network: Network, routes: Dict[str, List[Tuple[Zone, int]]]
+    network: Network, routes: dict[str, list[tuple[Zone, int]]]
 ) -> None:
     """Create and run the graphical visualizer until the window is closed."""
     Visualizer(network, routes)

@@ -7,13 +7,11 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:28:02 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:38:52 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:47:24 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 """A single zone in the drone network."""
-
-from typing import Optional
 
 
 class Zone:
@@ -26,7 +24,7 @@ class Zone:
         y: int,
         zone_type: str = "normal",
         max_drones: int = 1,
-        color: Optional[str] = None,
+        color: str | None = None,
     ) -> None:
         """Create a zone with its name, coordinates, type and capacity."""
         self.name = name

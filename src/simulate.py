@@ -13,10 +13,10 @@
 
 """Turns computed drone routes into turn-by-turn text output."""
 
-from typing import Dict, List, Tuple
-from models.zone import Zone
+
 from algorithms import ReservationTable
 from models.network import Network
+from models.zone import Zone
 
 
 class SimulationEngine:
@@ -24,7 +24,7 @@ class SimulationEngine:
 
     def __init__(
         self,
-        routes: Dict[str, List[Tuple[Zone, int]]],
+        routes: dict[str, list[tuple[Zone, int]]],
         network: Network,
         reservation_table: ReservationTable,
     ) -> None:
@@ -33,7 +33,7 @@ class SimulationEngine:
         self._network = network
         self._reservation_table = reservation_table
 
-    def generate_turns(self) -> List[str]:
+    def generate_turns(self) -> list[str]:
         """Return the simulation output as one line per turn."""
         turn_actions = self._build_turn_actions()
         max_turn = max(turn_actions.keys())
@@ -50,9 +50,9 @@ class SimulationEngine:
 
         return lines
 
-    def _build_turn_actions(self) -> Dict[int, List[str]]:
+    def _build_turn_actions(self) -> dict[int, list[str]]:
         """Group every drone's moves by the turn they happen on."""
-        turn_actions: Dict[int, List[str]] = {}
+        turn_actions: dict[int, list[str]] = {}
 
         for drone_id, timed_path in self._routes.items():
             for i in range(len(timed_path) - 1):
@@ -77,7 +77,7 @@ class SimulationEngine:
                     )
         return turn_actions
 
-    def _build_info(self, turn: int) -> List[str]:
+    def _build_info(self, turn: int) -> list[str]:
         """Return extra per-turn zone/connection occupancy info lines."""
         lines = []
 

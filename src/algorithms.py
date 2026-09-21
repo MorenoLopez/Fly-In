@@ -13,10 +13,10 @@
 
 """Pathfinding: reservation table, pathfinder, and drone routing."""
 
-from models.drone import Drone
 import heapq
+
+from models.drone import Drone
 from models.network import Network
-from typing import Dict, Tuple, List, Optional
 from models.zone import Zone
 
 
@@ -25,12 +25,12 @@ class ReservationTable:
 
     def __init__(self) -> None:
         """Create an empty reservation table."""
-        self._zone_occupancy: Dict[Tuple[str, int], int] = {}
-        self._edge_occupancy: Dict[Tuple[Tuple[str, str], int], int] = {}
+        self._zone_occupancy: dict[tuple[str, int], int] = {}
+        self._edge_occupancy: dict[tuple[tuple[str, str], int], int] = {}
 
     def _get_canonical_edge(
         self, zone_a_name: str, zone_b_name: str
-    ) -> Tuple[str, str]:
+    ) -> tuple[str, str]:
         """Return a connection's two zone names in a fixed order."""
         if zone_a_name < zone_b_name:
             return (zone_a_name, zone_b_name)
@@ -72,7 +72,7 @@ class ReservationTable:
         key = (edge, turn)
         self._edge_occupancy[key] = self._edge_occupancy.get(key, 0) + 1
 
-    def reserve_path(self, timed_path: List[Tuple[Zone, int]]) -> None:
+    def reserve_path(self, timed_path: list[tuple[Zone, int]]) -> None:
         """Reserve every zone/connection slot used by a full timed path."""
         start_zone, start_turn = timed_path[0]
         self.reserve_zone(start_zone.name, start_turn)
@@ -99,7 +99,7 @@ class ReservationTable:
                 )
                 self.reserve_zone(next_zone.name, next_turn)
 
-    def zone_occupancy_at(self, turn: int) -> Dict[str, int]:
+    def zone_occupancy_at(self, turn: int) -> dict[str, int]:
         """
         Return {zone_name: count} for every zone occupied at the given turn
         ."""
@@ -109,7 +109,7 @@ class ReservationTable:
             if t == turn
         }
 
-    def edge_occupancy_at(self, turn: int) -> Dict[Tuple[str, str], int]:
+    def edge_occupancy_at(self, turn: int) -> dict[tuple[str, str], int]:
         """
         Return {canonical_edge: count} for every conn used at the given turn
         ."""
@@ -126,7 +126,7 @@ class PathFinder:
     def __init__(self, network: Network) -> None:
         """Store the network and index its zones by name."""
         self._network = network
-        self._zones_by_name: Dict[str, Zone] = {
+        self._zones_by_name: dict[str, Zone] = {
             z.name: z for z in network.zones
         }
 
@@ -136,17 +136,17 @@ class PathFinder:
         start_zone: Zone,
         end_zone: Zone,
         start_turn: int,
-    ) -> Optional[List[Tuple[Zone, int]]]:
+    ) -> list[tuple[Zone, int]] | None:
         """Find the shortest (zone, turn) path from start to end zone."""
         max_turn = start_turn + len(self._network.zones) * 4
 
-        priority_queue: List[Tuple[int, str, int]] = []
+        priority_queue: list[tuple[int, str, int]] = []
         heapq.heappush(priority_queue, (0, start_zone.name, start_turn))
 
-        best_cost: Dict[tuple[str, int], int] = {}
+        best_cost: dict[tuple[str, int], int] = {}
         best_cost[(start_zone.name, start_turn)] = 0
 
-        predecessor: Dict[Tuple[str, int], Tuple[Zone, int]] = {}
+        predecessor: dict[tuple[str, int], tuple[Zone, int]] = {}
 
         while priority_queue:
             cost, curr_zone_name, curr_turn = heapq.heappop(priority_queue)
@@ -214,9 +214,9 @@ class PathFinder:
 
     def _relax(
         self,
-        best_cost: Dict[Tuple[str, int], int],
-        predecessor: Dict[Tuple[str, int], Tuple[Zone, int]],
-        priority_queue: List[Tuple[int, str, int]],
+        best_cost: dict[tuple[str, int], int],
+        predecessor: dict[tuple[str, int], tuple[Zone, int]],
+        priority_queue: list[tuple[int, str, int]],
         from_zone: Zone,
         from_turn: int,
         to_zone: Zone,
@@ -232,14 +232,14 @@ class PathFinder:
 
     def _reconstruct_path(
         self,
-        predecessor: Dict[Tuple[str, int], Tuple[Zone, int]],
+        predecessor: dict[tuple[str, int], tuple[Zone, int]],
         end_zone: Zone,
         end_turn: int,
         start_zone: Zone,
         start_turn: int,
-    ) -> List[Tuple[Zone, int]]:
+    ) -> list[tuple[Zone, int]]:
         """Rebuild the full path by walking back through predecessors."""
-        path: List[Tuple[Zone, int]] = [(end_zone, end_turn)]
+        path: list[tuple[Zone, int]] = [(end_zone, end_turn)]
         curr_key = (end_zone.name, end_turn)
 
         while curr_key != (start_zone.name, start_turn):
@@ -273,14 +273,14 @@ class RoutingManager:
 
     def route_all_drones(
         self,
-        drones: List[Drone],
+        drones: list[Drone],
         start_zone: Zone,
         end_zone: Zone,
-    ) -> Dict[str, List[Tuple[Zone, int]]]:
+    ) -> dict[str, list[tuple[Zone, int]]]:
         """Compute and reserve a path for every drone, in id order."""
         sorted_drones = sorted(drones, key=lambda d: d.id)
 
-        routes: Dict[str, List[Tuple[Zone, int]]] = {}
+        routes: dict[str, list[tuple[Zone, int]]] = {}
 
         for drone in sorted_drones:
             timed_path = self._pathfinder.find_path(

@@ -14,11 +14,11 @@
 """Parses a map file into a Network object."""
 
 import re
-from typing import Dict, Optional, Set, List
-from models.zone import Zone
-from models.drone import Drone
+
 from models.connection import Connection
+from models.drone import Drone
 from models.network import Network
+from models.zone import Zone
 
 _DRONE_PATTERN = re.compile(r"^nb_drones:\s*(-?\d+)\s*$")
 
@@ -53,12 +53,12 @@ class Parser:
 
     def __init__(self) -> None:
         """Initialize an empty parser state."""
-        self._nb_drones: Optional[int] = None
-        self._zones: Dict[str, Zone] = {}
-        self._connection_keys: Set[tuple[str, str]] = set()
-        self._connections: List[Connection] = []
-        self._start_name: Optional[str] = None
-        self._end_name: Optional[str] = None
+        self._nb_drones: int | None = None
+        self._zones: dict[str, Zone] = {}
+        self._connection_keys: set[tuple[str, str]] = set()
+        self._connections: list[Connection] = []
+        self._start_name: str | None = None
+        self._end_name: str | None = None
         self._seen_first_line: bool = False
 
     def _reset(self) -> None:
@@ -87,8 +87,8 @@ class Parser:
         self._nb_drones = value
 
     def _parse_metadata(
-        self, meta_str: Optional[str], line_num: int, allowed_keys: Set[str]
-    ) -> Dict[str, str]:
+        self, meta_str: str | None, line_num: int, allowed_keys: set[str]
+    ) -> dict[str, str]:
         """Parse a [key=value ...] metadata block into a dict."""
         if meta_str is None:
             return {}
@@ -103,7 +103,7 @@ class Parser:
         if not inner:
             return {}
 
-        metadata: Dict[str, str] = {}
+        metadata: dict[str, str] = {}
         for token in inner.split():
             match = _METADATA_ITEM_PATTERN.match(token)
             if match is None:
