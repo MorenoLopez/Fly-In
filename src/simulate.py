@@ -7,11 +7,11 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:24:19 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:24:09 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:38:46 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-"""Turns computed drone routes into turn-by-turn text output"""
+"""Turns computed drone routes into turn-by-turn text output."""
 
 from typing import Dict, List, Tuple
 from models.zone import Zone
@@ -20,20 +20,21 @@ from models.network import Network
 
 
 class SimulationEngine:
-    """Converts drone routes into the required text output format"""
+    """Converts drone routes into the required text output format."""
+
     def __init__(
         self,
         routes: Dict[str, List[Tuple[Zone, int]]],
         network: Network,
         reservation_table: ReservationTable,
     ) -> None:
-        """Store the routes, network and reservation table"""
+        """Store the routes, network and reservation table."""
         self._routes = routes
         self._network = network
         self._reservation_table = reservation_table
 
     def generate_turns(self) -> List[str]:
-        """Return the simulation output as one line per turn"""
+        """Return the simulation output as one line per turn."""
         turn_actions = self._build_turn_actions()
         max_turn = max(turn_actions.keys())
         verbose: bool = False
@@ -50,7 +51,7 @@ class SimulationEngine:
         return lines
 
     def _build_turn_actions(self) -> Dict[int, List[str]]:
-        """Group every drone's moves by the turn they happen on"""
+        """Group every drone's moves by the turn they happen on."""
         turn_actions: Dict[int, List[str]] = {}
 
         for drone_id, timed_path in self._routes.items():
@@ -77,7 +78,7 @@ class SimulationEngine:
         return turn_actions
 
     def _build_info(self, turn: int) -> List[str]:
-        """Return extra per-turn zone/connection occupancy info lines"""
+        """Return extra per-turn zone/connection occupancy info lines."""
         lines = []
 
         zone_counts = self._reservation_table.zone_occupancy_at(turn)

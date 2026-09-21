@@ -7,19 +7,20 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:14:47 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:04:48 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:36:39 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-"""A single drone being routed through the network"""
+"""A single drone being routed through the network."""
 
 from models.zone import Zone
 
 
 class Drone:
-    """A drone identified by an id, tracking its current zone"""
+    """A drone identified by an id, tracking its current zone."""
+
     def __init__(self, id: str, curr_zone: Zone) -> None:
-        """Create a drone starting at the given zone"""
+        """Create a drone starting at the given zone."""
         self.id = id
         self.curr_zone = curr_zone
         self.is_delivered: bool = False

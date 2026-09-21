@@ -7,12 +7,12 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/16 07:45:52 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:24:09 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:42:57 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 
-"""Graphical (Arcade-based) visualizer for the Fly-in drone simulation"""
+"""Graphical (Arcade-based) visualizer for the Fly-in drone simulation."""
 
 import os
 from typing import Dict, List, Tuple, Optional
@@ -58,7 +58,7 @@ _ZONE_TYPE_OUTLINE = {
 class Visualizer(arcade.Window):
     """
     Arcade window that renders the drone network and animates drone movement
-    """
+    ."""
 
     def __init__(
         self,
@@ -71,7 +71,7 @@ class Visualizer(arcade.Window):
             network: The parsed map (zones and connections) to display.
             routes: Mapping of drone id to its timed path, as produced by
                 RoutingManager.route_all_drones.
-        """
+        ."""
         screen_w, screen_h = arcade.get_display_size()
         window_w = int(screen_w * 0.85)
         window_h = int(screen_h * 0.85)
@@ -140,7 +140,7 @@ class Visualizer(arcade.Window):
     def _safe_load_texture(self, path: str) -> Optional[arcade.Texture]:
         """
         Load a texture from disk, returning None (with a warning) on failure
-        """
+        ."""
         try:
             return arcade.load_texture(path)
         except (FileNotFoundError, OSError) as e:
@@ -154,7 +154,7 @@ class Visualizer(arcade.Window):
 
         Falls back to an empty list (drones drawn as plain circles) if the
         file is missing or malformed.
-        """
+        ."""
         try:
             base_tex = arcade.load_texture(path)
         except (FileNotFoundError, OSError) as e:
@@ -183,7 +183,7 @@ class Visualizer(arcade.Window):
         Each category is expected to live at assets/zones/<category>.png.
         A missing or invalid file logs a warning and maps to None; the
         caller falls back to a plain colored circle for that category.
-        """
+        ."""
         textures: Dict[str, Optional[arcade.Texture]] = {}
         for category, filename in _ZONE_TEXTURE_FILES.items():
             path = os.path.join(_ZONES_DIR, filename)
@@ -194,7 +194,7 @@ class Visualizer(arcade.Window):
         """Pick the texture representing a zone, based on start/end/type.
 
         Priority: start/end flags override zone_type.
-        """
+        ."""
         if zone.is_start:
             return self._zone_textures.get("start")
         if zone.is_end:
@@ -204,7 +204,7 @@ class Visualizer(arcade.Window):
     def _build_zone_text_objects(self) -> Dict[str, arcade.Text]:
         """
         Create one reusable Text object per zone name (position updates /frame)
-        """
+        ."""
         texts: Dict[str, arcade.Text] = {}
         for zone in self._network.zones:
             texts[zone.name] = arcade.Text(
@@ -221,7 +221,7 @@ class Visualizer(arcade.Window):
     def _build_drone_text_objects(self) -> Dict[str, arcade.Text]:
         """
         Create one reusable Text object per drone id (position updates /frame)
-        """
+        ."""
         texts: Dict[str, arcade.Text] = {}
         for drone_id in self._routes.keys():
             texts[drone_id] = arcade.Text(
@@ -238,7 +238,7 @@ class Visualizer(arcade.Window):
     def _compute_screen_positions(self) -> Dict[str, Tuple[float, float]]:
         """
         Map each zone's (x, y) map coordinate to a base screen position
-        """
+        ."""
         xs = [z.x for z in self._network.zones]
         ys = [z.y for z in self._network.zones]
         min_x, max_x = min(xs), max(xs)
@@ -259,14 +259,14 @@ class Visualizer(arcade.Window):
         return positions
 
     def _to_screen(self, x: float, y: float) -> Tuple[float, float]:
-        """Apply the current camera pan and zoom to a base layout position"""
+        """Apply the current camera pan and zoom to a base layout position."""
         return (
             x * self._zoom + self._camera_offset_x,
             y * self._zoom + self._camera_offset_y,
         )
 
     def on_resize(self, width: int, height: int) -> None:
-        """Recompute zone layout when the window is resized"""
+        """Recompute zone layout when the window is resized."""
         super().on_resize(width, height)
         if hasattr(self, "_network"):
             self._positions = self._compute_screen_positions()
@@ -278,7 +278,7 @@ class Visualizer(arcade.Window):
         contains the current simulated turn, and interpolates linearly
         across that segment's full duration (1 turn for a normal move,
         2 turns for a restricted-zone transit, 0 for a wait).
-        """
+        ."""
         path = self._routes[drone_id]
         t = self._current_turn
 
@@ -299,7 +299,7 @@ class Visualizer(arcade.Window):
     def _draw_background(self) -> None:
         """
         Draw the background texture, or a plain fill if it failed to load
-        """
+        ."""
         if self._bg_texture is not None:
             arcade.draw_texture_rect(
                 self._bg_texture,
@@ -315,7 +315,7 @@ class Visualizer(arcade.Window):
     def _draw_connections(self) -> None:
         """
         Draw a line for every connection in the network, camera-transformed
-        """
+        ."""
         for connection in self._network.connections:
             x1, y1 = self._to_screen(*self._positions[connection.zone1.name])
             x2, y2 = self._to_screen(*self._positions[connection.zone2.name])
@@ -324,7 +324,7 @@ class Visualizer(arcade.Window):
     def _draw_zones(self) -> None:
         """
         Draw every zone as its assigned texture, or a fallback colored circle
-        """
+        ."""
         radius = ZONE_RADIUS * self._zoom
         for zone in self._network.zones:
             x, y = self._to_screen(*self._positions[zone.name])
@@ -353,7 +353,7 @@ class Visualizer(arcade.Window):
     def _draw_drones(self) -> None:
         """
         Draw every drone at its current interpolated, cam-transformed position
-        """
+        ."""
         current_drone_tex: Optional[arcade.Texture] = None
         if self._drone_textures:
             frame_idx = int(self._anim_timer * DRONE_ANIM_FPS) % len(
@@ -387,7 +387,7 @@ class Visualizer(arcade.Window):
     def _draw_hud(self) -> None:
         """
         Draw a compact HUD: turn fraction, progress bar, play state
-        """
+        ."""
         panel_x, panel_y = 14, self.height - 14
         panel_w, panel_h = 160, 54
 
@@ -455,7 +455,7 @@ class Visualizer(arcade.Window):
         current turn advances continuously. In manual step mode, the current
         turn animates smoothly toward whatever turn was last requested via
         the arrow keys, at the same pace as auto-play.
-        """
+        ."""
         self._anim_timer += delta_time
         step = delta_time / SECONDS_PER_TURN
 
@@ -472,7 +472,7 @@ class Visualizer(arcade.Window):
             )
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
-        """Handle playback controls: play/pause, step, quit"""
+        """Handle playback controls: play/pause, step, quit."""
         if symbol == arcade.key.SPACE:
             self._playing = not self._playing
             if self._playing:
@@ -491,21 +491,21 @@ class Visualizer(arcade.Window):
     def on_mouse_press(
         self, x: int, y: int, button: int, modifiers: int
     ) -> None:
-        """Start camera panning on left mouse button press"""
+        """Start camera panning on left mouse button press."""
         if button == arcade.MOUSE_BUTTON_LEFT:
             self._dragging = True
 
     def on_mouse_release(
         self, x: int, y: int, button: int, modifiers: int
     ) -> None:
-        """Stop camera panning on left mouse button release"""
+        """Stop camera panning on left mouse button release."""
         if button == arcade.MOUSE_BUTTON_LEFT:
             self._dragging = False
 
     def on_mouse_drag(
         self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int
     ) -> None:
-        """Pan the camera by the mouse movement delta while dragging"""
+        """Pan the camera by the mouse movement delta while dragging."""
         if self._dragging:
             self._camera_offset_x += dx
             self._camera_offset_y += dy
@@ -516,7 +516,7 @@ class Visualizer(arcade.Window):
         """
         Zoom in/out with the scroll wheel,
         keeping the point under the cursor fixed
-        """
+        ."""
         if scroll_y == 0:
             return None
 
@@ -537,6 +537,6 @@ class Visualizer(arcade.Window):
 def run_visualizer(
     network: Network, routes: Dict[str, List[Tuple[Zone, int]]]
 ) -> None:
-    """Create and run the graphical visualizer until the window is closed"""
+    """Create and run the graphical visualizer until the window is closed."""
     Visualizer(network, routes)
     arcade.run()

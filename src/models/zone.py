@@ -7,17 +7,18 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:28:02 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:03:00 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:38:52 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-"""A single zone in the drone network"""
+"""A single zone in the drone network."""
 
 from typing import Optional
 
 
 class Zone:
-    """A zone with a position, a type, a capacity, and a color"""
+    """A zone with a position, a type, a capacity, and a color."""
+
     def __init__(
         self,
         name: str,
@@ -27,7 +28,7 @@ class Zone:
         max_drones: int = 1,
         color: Optional[str] = None,
     ) -> None:
-        """Create a zone with its name, coordinates, type and capacity"""
+        """Create a zone with its name, coordinates, type and capacity."""
         self.name = name
         self.x = x
         self.y = y

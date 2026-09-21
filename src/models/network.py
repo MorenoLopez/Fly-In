@@ -7,11 +7,11 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 17:50:50 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:24:09 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:39:08 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-"""The full network of zones, connections and drones"""
+"""The full network of zones, connections and drones."""
 
 from typing import Optional, List
 from models.drone import Drone
@@ -20,9 +20,10 @@ from models.zone import Zone
 
 
 class Network:
-    """Holds all zones, connections, drones, and the start/end zones"""
+    """Holds all zones, connections, drones, and the start/end zones."""
+
     def __init__(self) -> None:
-        """Create an empty network"""
+        """Create an empty network."""
         self.zones: list[Zone] = []
         self.connections: list[Connection] = []
         self.drones: list[Drone] = []
@@ -30,7 +31,7 @@ class Network:
         self.end_zone: Optional[Zone] = None
 
     def connections_of(self, zone: Zone) -> List[Connection]:
-        """Return all connections attached to the given zone"""
+        """Return all connections attached to the given zone."""
         return [
             c
             for c in self.connections
@@ -38,7 +39,7 @@ class Network:
         ]
 
     def get_zone_by_name(self, name: str) -> Zone:
-        """Return the zone with the given name"""
+        """Return the zone with the given name."""
         for zone in self.zones:
             if zone.name == name:
                 return zone
@@ -47,7 +48,7 @@ class Network:
     def get_connection_by_names(
         self, zone_a_name: str, zone_b_name: str
     ) -> Connection:
-        """Return the connection between two named zones"""
+        """Return the connection between two named zones."""
         for connection in self.connections:
             names = {connection.zone1.name, connection.zone2.name}
             if names == {zone_a_name, zone_b_name}:
