@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/16 07:45:52 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/16 16:21:44 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 11:43:10 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -23,7 +23,7 @@ from models.zone import Zone
 
 MARGIN = 90
 ZONE_RADIUS = 32
-SECONDS_PER_TURN = 1.0
+SECONDS_PER_TURN = 0.7
 DRONE_ANIM_FPS = 8
 MIN_ZOOM = 0.3
 MAX_ZOOM = 3.0
