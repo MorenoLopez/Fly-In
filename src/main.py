@@ -7,12 +7,12 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:15:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/16 16:47:26 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:24:09 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 
-"""Entry point for the Fly-in drone routing simulation."""
+"""Entry point for the Fly-in drone routing simulation"""
 
 import sys
 import argparse
@@ -27,7 +27,7 @@ from algorithms import (
 
 
 def parse_args() -> argparse.Namespace:
-    """Parse and return the command-line arguments for the simulation."""
+    """Parse and return the command-line arguments for the simulation"""
     arg_parser = argparse.ArgumentParser(
         description="Fly-in drone routing simulation"
     )
@@ -41,7 +41,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    """Parse a map, route all drones, and display the resulting simulation."""
+    """Parse a map, route all drones, and display the resulting simulation"""
     args = parse_args()
 
     try:

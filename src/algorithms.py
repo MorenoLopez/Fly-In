@@ -7,10 +7,11 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/09 14:41:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/16 14:51:54 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:24:09 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
+"""Pathfinding: reservation table, pathfinder, and drone routing"""
 
 from models.drone import Drone
 import heapq
@@ -20,18 +21,22 @@ from models.zone import Zone
 
 
 class ReservationTable:
+    """Tracks which zones/connections are reserved at which turn"""
     def __init__(self) -> None:
+        """Create an empty reservation table"""
         self._zone_occupancy: Dict[Tuple[str, int], int] = {}
         self._edge_occupancy: Dict[Tuple[Tuple[str, str], int], int] = {}
 
     def _get_canonical_edge(
         self, zone_a_name: str, zone_b_name: str
     ) -> Tuple[str, str]:
+        """Return a connection's two zone names in a fixed order"""
         if zone_a_name < zone_b_name:
             return (zone_a_name, zone_b_name)
         return (zone_b_name, zone_a_name)
 
     def is_zone_available(self, zone: Zone, turn: int) -> bool:
+        """Check whether a zone has room for a drone at a given turn"""
         if zone.is_start or zone.is_end:
             return True
 
@@ -41,6 +46,7 @@ class ReservationTable:
     def is_connection_available(
         self, zone_a: Zone, zone_b: Zone, turn: int, max_capacity: int
     ) -> bool:
+        """Check whether a connection has room at a given turn"""
         edge = self._get_canonical_edge(zone_a.name, zone_b.name)
 
         if self._edge_occupancy.get((edge, turn), 0) >= max_capacity:
@@ -53,17 +59,20 @@ class ReservationTable:
         return True
 
     def reserve_zone(self, zone_name: str, turn: int) -> None:
+        """Reserve one slot in a zone at a given turn"""
         key = (zone_name, turn)
         self._zone_occupancy[key] = self._zone_occupancy.get(key, 0) + 1
 
     def reserve_connection(
         self, zone_a_name: str, zone_b_name: str, turn: int
     ) -> None:
+        """Reserve one slot on a connection at a given turn"""
         edge = self._get_canonical_edge(zone_a_name, zone_b_name)
         key = (edge, turn)
         self._edge_occupancy[key] = self._edge_occupancy.get(key, 0) + 1
 
     def reserve_path(self, timed_path: List[Tuple[Zone, int]]) -> None:
+        """Reserve every zone/connection slot used by a full timed path"""
         start_zone, start_turn = timed_path[0]
         self.reserve_zone(start_zone.name, start_turn)
 
@@ -111,7 +120,9 @@ class ReservationTable:
 
 
 class PathFinder:
+    """Finds the shortest timed path for a single drone"""
     def __init__(self, network: Network) -> None:
+        """Store the network and index its zones by name"""
         self._network = network
         self._zones_by_name: Dict[str, Zone] = {
             z.name: z for z in network.zones
@@ -124,6 +135,7 @@ class PathFinder:
         end_zone: Zone,
         start_turn: int,
     ) -> Optional[List[Tuple[Zone, int]]]:
+        """Find the shortest (zone, turn) path from start to end zone"""
         max_turn = start_turn + len(self._network.zones) * 4
 
         priority_queue: List[Tuple[int, str, int]] = []
@@ -209,6 +221,7 @@ class PathFinder:
         to_turn: int,
         new_cost: int,
     ) -> None:
+        """Update the best known path to a state, if this one is cheaper"""
         key = (to_zone.name, to_turn)
         if new_cost < best_cost.get(key, float("inf")):
             best_cost[key] = new_cost
@@ -223,6 +236,7 @@ class PathFinder:
         start_zone: Zone,
         start_turn: int,
     ) -> List[Tuple[Zone, int]]:
+        """Rebuild the full path by walking back through predecessors"""
         path: List[Tuple[Zone, int]] = [(end_zone, end_turn)]
         curr_key = (end_zone.name, end_turn)
 
@@ -236,17 +250,20 @@ class PathFinder:
 
 
 class RoutingError(Exception):
+    """Raised when no valid path could be found for a drone"""
     def __init__(self, drone_id: str, message: str) -> None:
+        """Store the drone id and error message"""
         self.drone_id = drone_id
         self.message = message
         super().__init__(f"Drone {drone_id}: {message}")
 
 
 class RoutingManager:
-
+    """Routes every drone one at a time, reserving each path"""
     def __init__(
         self, pathfinder: PathFinder, reservation_table: ReservationTable
     ) -> None:
+        """Store the pathfinder and the shared reservation table"""
         self._pathfinder = pathfinder
         self._reservation_table = reservation_table
 
@@ -256,7 +273,7 @@ class RoutingManager:
         start_zone: Zone,
         end_zone: Zone,
     ) -> Dict[str, List[Tuple[Zone, int]]]:
-
+        """Compute and reserve a path for every drone, in id order"""
         sorted_drones = sorted(drones, key=lambda d: d.id)
 
         routes: Dict[str, List[Tuple[Zone, int]]] = {}

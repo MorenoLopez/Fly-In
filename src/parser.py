@@ -7,10 +7,11 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 17:56:45 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/16 16:57:45 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:24:09 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
+"""Parses a map file into a Network object"""
 
 import re
 from typing import Dict, Optional, Set, List
@@ -39,15 +40,18 @@ _CONNECTION_METADATA_KEYS = {"max_link_capacity"}
 
 
 class ParseError(Exception):
+    """Raised when the map file is malformed, with the line number"""
     def __init__(self, line_num: int, message: str) -> None:
+        """Store the line number and error message"""
         self.line_num = line_num
         self.message = message
         super().__init__(f"Line {line_num}: {message}")
 
 
 class Parser:
-
+    """Parses a map file, line by line, into a Network"""
     def __init__(self) -> None:
+        """Initialize an empty parser state"""
         self._nb_drones: Optional[int] = None
         self._zones: Dict[str, Zone] = {}
         self._connection_keys: Set[tuple[str, str]] = set()
@@ -57,6 +61,7 @@ class Parser:
         self._seen_first_line: bool = False
 
     def _reset(self) -> None:
+        """Clear parser state so the instance can be reused"""
         self._nb_drones = None
         self._zones = {}
         self._connection_keys = set()
@@ -66,6 +71,7 @@ class Parser:
         self._seen_first_line = False
 
     def _parse_nb_drones_line(self, line: str, line_num: int) -> None:
+        """Parse the nb_drones line and store the drone count"""
         if self._nb_drones is not None:
             raise ParseError(line_num, "nb_drones is defined more than once")
 
@@ -82,6 +88,7 @@ class Parser:
     def _parse_metadata(
         self, meta_str: Optional[str], line_num: int, allowed_keys: Set[str]
     ) -> Dict[str, str]:
+        """Parse a [key=value ...] metadata block into a dict"""
         if meta_str is None:
             return {}
 
@@ -114,6 +121,7 @@ class Parser:
         return metadata
 
     def _parse_hub_line(self, prefix: str, line: str, line_num: int) -> None:
+        """Parse a hub/start_hub/end_hub line into a Zone"""
         match = _HUB_PATTERN.match(line)
         if match is None:
             raise ParseError(line_num, f"malformed {prefix} line: {line!r}")
@@ -169,6 +177,7 @@ class Parser:
         self._zones[name] = zone
 
     def _parse_connection_line(self, line: str, line_num: int) -> None:
+        """Parse a connection line into a Connection"""
         match = _CONNECTION_PATTERN.match(line)
         if match is None:
             raise ParseError(line_num, f"malformed connection line: {line!r}")
@@ -213,6 +222,7 @@ class Parser:
         self._connections.append(connection)
 
     def _parse_line(self, raw_line: str, line_num: int) -> None:
+        """Parse a single line of the map file, by its prefix"""
         line = raw_line.split("#")[0].strip()
 
         if not line:
@@ -242,6 +252,7 @@ class Parser:
             )
 
     def parse(self, file_path: str) -> Network:
+        """Parse the given map file and return the resulting Network"""
         self._reset()
         has_content = False
 

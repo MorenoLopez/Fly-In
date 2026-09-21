@@ -7,12 +7,12 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/16 07:45:52 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 11:43:10 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:24:09 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 
-"""Graphical (Arcade-based) visualizer for the Fly-in drone simulation."""
+"""Graphical (Arcade-based) visualizer for the Fly-in drone simulation"""
 
 import os
 from typing import Dict, List, Tuple, Optional
@@ -259,14 +259,14 @@ class Visualizer(arcade.Window):
         return positions
 
     def _to_screen(self, x: float, y: float) -> Tuple[float, float]:
-        """Apply the current camera pan and zoom to a base layout position."""
+        """Apply the current camera pan and zoom to a base layout position"""
         return (
             x * self._zoom + self._camera_offset_x,
             y * self._zoom + self._camera_offset_y,
         )
 
     def on_resize(self, width: int, height: int) -> None:
-        """Recompute zone layout when the window is resized."""
+        """Recompute zone layout when the window is resized"""
         super().on_resize(width, height)
         if hasattr(self, "_network"):
             self._positions = self._compute_screen_positions()
@@ -472,7 +472,7 @@ class Visualizer(arcade.Window):
             )
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
-        """Handle playback controls: play/pause, step, quit."""
+        """Handle playback controls: play/pause, step, quit"""
         if symbol == arcade.key.SPACE:
             self._playing = not self._playing
             if self._playing:
@@ -491,21 +491,21 @@ class Visualizer(arcade.Window):
     def on_mouse_press(
         self, x: int, y: int, button: int, modifiers: int
     ) -> None:
-        """Start camera panning on left mouse button press."""
+        """Start camera panning on left mouse button press"""
         if button == arcade.MOUSE_BUTTON_LEFT:
             self._dragging = True
 
     def on_mouse_release(
         self, x: int, y: int, button: int, modifiers: int
     ) -> None:
-        """Stop camera panning on left mouse button release."""
+        """Stop camera panning on left mouse button release"""
         if button == arcade.MOUSE_BUTTON_LEFT:
             self._dragging = False
 
     def on_mouse_drag(
         self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int
     ) -> None:
-        """Pan the camera by the mouse movement delta while dragging."""
+        """Pan the camera by the mouse movement delta while dragging"""
         if self._dragging:
             self._camera_offset_x += dx
             self._camera_offset_y += dy
@@ -537,6 +537,6 @@ class Visualizer(arcade.Window):
 def run_visualizer(
     network: Network, routes: Dict[str, List[Tuple[Zone, int]]]
 ) -> None:
-    """Create and run the graphical visualizer until the window is closed."""
+    """Create and run the graphical visualizer until the window is closed"""
     Visualizer(network, routes)
     arcade.run()

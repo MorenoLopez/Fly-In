@@ -7,13 +7,14 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:45:35 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:04:05 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:24:40 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
 """A connection linking two zones"""
 
 from models.zone import Zone
+
 
 class Connection:
     """A bidirectional link between two zones, with a capacity"""
