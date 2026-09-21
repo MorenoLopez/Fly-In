@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:24:19 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:38:46 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:53:58 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -37,7 +37,7 @@ class SimulationEngine:
         """Return the simulation output as one line per turn."""
         turn_actions = self._build_turn_actions()
         max_turn = max(turn_actions.keys())
-        verbose: bool = False
+        verbose: bool = True
 
         lines = []
         for turn in range(1, max_turn + 1):

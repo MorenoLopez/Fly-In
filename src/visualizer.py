@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/16 07:45:52 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:42:57 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/21 12:53:09 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -15,10 +15,10 @@
 """Graphical (Arcade-based) visualizer for the Fly-in drone simulation."""
 
 import os
-
+import math
 import arcade
 from arcade.application import EVENT_HANDLE_STATE
-
+from typing import Tuple
 from models.network import Network
 from models.zone import Zone
 
@@ -351,6 +351,19 @@ class Visualizer(arcade.Window):
             text_obj.y = y + radius + 4
             text_obj.draw()
 
+    def _drone_spread_offset(
+        self, index: int, total: int
+    ) -> Tuple[float, float]:
+        """
+        Return a small per-drone offset so overlapping drones stay visible
+        """
+        if total <= 1:
+            return 0.0, 0.0
+
+        spread_radius = 10.0
+        angle = (2 * math.pi * index) / total
+        return spread_radius * math.cos(angle), spread_radius * math.sin(angle)
+
     def _draw_drones(self) -> None:
         """
         Draw every drone at its current interpolated, cam-transformed position
@@ -362,10 +375,15 @@ class Visualizer(arcade.Window):
             )
             current_drone_tex = self._drone_textures[frame_idx]
 
-        for drone_id in sorted(self._routes.keys()):
+        drone_ids = sorted(self._routes.keys())
+        for idx, drone_id in enumerate(drone_ids):
             base_x, base_y = self._drone_screen_position(drone_id)
             x, y = self._to_screen(base_x, base_y)
             y += ZONE_RADIUS * self._zoom * 0.6
+
+            offset_x, offset_y = self._drone_spread_offset(idx, len(drone_ids))
+            x += offset_x * self._zoom
+            y += offset_y * self._zoom
 
             if current_drone_tex is not None:
                 w = current_drone_tex.width * 0.9 * self._zoom
