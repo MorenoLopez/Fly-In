@@ -1,0 +1,16 @@
+# Circular loop - 6 drones
+nb_drones: 6
+start_hub: start 0 0 [color=green]
+end_hub: end 0 10 [color=yellow]
+hub: loop1 5 2 [zone=normal max_drones=2]
+hub: loop2 8 5 [zone=normal max_drones=2]
+hub: loop3 5 8 [zone=normal max_drones=2]
+hub: loop4 2 5 [zone=normal max_drones=2]
+connection: start-loop1
+connection: start-loop4
+connection: loop1-loop2
+connection: loop2-loop3
+connection: loop3-loop4
+connection: loop4-loop1
+connection: loop2-end
+connection: loop3-end

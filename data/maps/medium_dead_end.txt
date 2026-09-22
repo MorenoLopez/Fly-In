@@ -1,0 +1,14 @@
+# Dead end trap - 5 drones
+nb_drones: 5
+start_hub: start 0 0 [color=green]
+end_hub: end 20 0 [color=yellow]
+hub: trap 10 5 [zone=normal color=red]
+hub: safe 10 -5 [zone=normal color=blue]
+hub: mid1 5 0 [zone=normal]
+hub: mid2 15 0 [zone=normal]
+connection: start-mid1
+connection: mid1-trap
+connection: mid1-safe
+connection: trap-mid2
+connection: safe-mid2
+connection: mid2-end

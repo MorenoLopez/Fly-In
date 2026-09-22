@@ -1,0 +1,20 @@
+# Ultimate challenge - 15 drones
+nb_drones: 15
+start_hub: start 0 0 [color=green]
+end_hub: end 20 0 [color=yellow]
+hub: a1 4 4 [zone=normal max_drones=3]
+hub: a2 8 4 [zone=restricted color=red max_drones=2]
+hub: a3 12 4 [zone=normal max_drones=3]
+hub: b1 4 -4 [zone=normal max_drones=3]
+hub: b2 8 -4 [zone=priority color=green max_drones=3]
+hub: b3 12 -4 [zone=normal max_drones=3]
+hub: mid 16 0 [zone=normal max_drones=4]
+connection: start-a1
+connection: start-b1
+connection: a1-a2
+connection: a2-a3 [max_link_capacity=2]
+connection: b1-b2
+connection: b2-b3
+connection: a3-mid
+connection: b3-mid
+connection: mid-end

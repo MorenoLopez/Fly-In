@@ -1,0 +1,9 @@
+# Capacity hell - 12 drones
+nb_drones: 12
+start_hub: start 0 0 [color=green]
+end_hub: end 12 0 [color=yellow]
+hub: gate1 4 0 [zone=normal max_drones=1]
+hub: gate2 8 0 [zone=normal max_drones=1]
+connection: start-gate1 [max_link_capacity=1]
+connection: gate1-gate2 [max_link_capacity=1]
+connection: gate2-end [max_link_capacity=1]

@@ -1,0 +1,30 @@
+# The Impossible Dream - 25 drones
+nb_drones: 25
+start_hub: start 0 0 [color=green]
+end_hub: end 24 0 [color=yellow]
+hub: n1 4 3 [zone=normal max_drones=2]
+hub: n2 8 3 [zone=restricted color=red max_drones=1]
+hub: n3 12 3 [zone=normal max_drones=2]
+hub: n4 16 3 [zone=priority color=green max_drones=2]
+hub: n5 20 3 [zone=normal max_drones=2]
+hub: s1 4 -3 [zone=normal max_drones=2]
+hub: s2 8 -3 [zone=priority color=green max_drones=2]
+hub: s3 12 -3 [zone=restricted color=red max_drones=1]
+hub: s4 16 -3 [zone=normal max_drones=2]
+hub: s5 20 -3 [zone=normal max_drones=2]
+hub: mid 12 0 [zone=normal max_drones=3]
+connection: start-n1
+connection: start-s1
+connection: n1-n2
+connection: n2-n3 [max_link_capacity=2]
+connection: n3-n4
+connection: n4-n5
+connection: s1-s2
+connection: s2-s3 [max_link_capacity=2]
+connection: s3-s4
+connection: s4-s5
+connection: n3-mid
+connection: s3-mid
+connection: n5-end
+connection: s5-end
+connection: mid-end

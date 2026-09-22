@@ -1,0 +1,7 @@
+# Restricted zone test - 2 drones
+nb_drones: 2
+start_hub: start 0 0 [color=green]
+end_hub: end 10 0 [color=yellow]
+hub: danger 5 0 [zone=restricted color=red]
+connection: start-danger
+connection: danger-end

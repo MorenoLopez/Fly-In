@@ -1,0 +1,14 @@
+# Priority puzzle - 4 drones
+nb_drones: 4
+start_hub: start 0 0 [color=green]
+end_hub: end 12 0 [color=yellow]
+hub: fastA 4 3 [zone=priority color=green]
+hub: fastB 8 3 [zone=priority color=green]
+hub: slowA 4 -3 [zone=normal color=gray]
+hub: slowB 8 -3 [zone=normal color=gray]
+connection: start-fastA
+connection: start-slowA
+connection: fastA-fastB
+connection: slowA-slowB
+connection: fastB-end
+connection: slowB-end
