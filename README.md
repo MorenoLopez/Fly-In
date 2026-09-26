@@ -119,10 +119,12 @@ uv run src/main.py --map data/maps/test.txt
 produces a turn-by-turn simulation such as:
 
 ```
-D1-corridorA D2-roof1
-D1-tunnelB
-D1-goal D2-roof2
-D2-goal
+D1-corridorA D2-hub-roof1
+D1-tunnelB D2-roof1 D3-corridorA
+D1-goal D2-roof2 D3-tunnelB D4-corridorA D5-hub-roof1
+D2-goal D3-goal D4-tunnelB D5-roof1
+D4-goal D5-roof2
+D5-goal
 ```
 
 Each line represents one simulation turn. `D<ID>-<zone>` means the drone
