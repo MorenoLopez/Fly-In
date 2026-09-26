@@ -7,12 +7,12 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:24:19 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:53:58 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/26 21:16:57 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
-"""Turns computed drone routes into turn-by-turn text output."""
 
+"""Turns computed drone routes into turn-by-turn text output."""
 
 from algorithms import ReservationTable
 from models.network import Network
@@ -32,12 +32,12 @@ class SimulationEngine:
         self._routes = routes
         self._network = network
         self._reservation_table = reservation_table
+        self._verbose: bool = True
 
     def generate_turns(self) -> list[str]:
         """Return the simulation output as one line per turn."""
         turn_actions = self._build_turn_actions()
         max_turn = max(turn_actions.keys())
-        verbose: bool = True
 
         lines = []
         for turn in range(1, max_turn + 1):
@@ -45,8 +45,26 @@ class SimulationEngine:
             if actions:
                 lines.append(" ".join(actions))
 
-                if verbose:
+                if self._verbose:
                     lines.extend(self._build_info(turn))
+
+        return lines
+
+    def get_turn_lines(self) -> list[tuple[int, str]]:
+        """Return (turn, line) pairs for every turn, action lines and, if
+        verbose, the extra zone/connection occupancy info lines too."""
+        turn_actions = self._build_turn_actions()
+        max_turn = max(turn_actions.keys())
+
+        lines: list[tuple[int, str]] = []
+        for turn in range(1, max_turn + 1):
+            actions = turn_actions.get(turn, [])
+            if actions:
+                lines.append((turn, " ".join(actions)))
+
+                if self._verbose:
+                    for info_line in self._build_info(turn):
+                        lines.append((turn, info_line))
 
         return lines
 

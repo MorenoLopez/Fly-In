@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/16 07:45:52 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:53:09 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/26 21:14:24 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -29,6 +29,9 @@ DRONE_ANIM_FPS = 8
 MIN_ZOOM = 0.3
 MAX_ZOOM = 3.0
 ZOOM_STEP = 1.1
+LOG_MAX_LINES = 8
+LOG_LINE_HEIGHT = 16
+LOG_PANEL_WIDTH = 460
 
 _ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
 
@@ -65,6 +68,7 @@ class Visualizer(arcade.Window):
         self,
         network: Network,
         routes: dict[str, list[tuple[Zone, int]]],
+        turn_lines: list[tuple[int, str]],
     ) -> None:
         """Build the visualizer window, load assets and precompute layout.
 
@@ -72,6 +76,8 @@ class Visualizer(arcade.Window):
             network: The parsed map (zones and connections) to display.
             routes: Mapping of drone id to its timed path, as produced by
                 RoutingManager.route_all_drones.
+            turn_lines: (turn, text) pairs, matching the CLI output, used
+                to feed the scrolling log panel.
         ."""
         screen_w, screen_h = arcade.get_display_size()
         window_w = int(screen_w * 0.85)
@@ -83,6 +89,7 @@ class Visualizer(arcade.Window):
 
         self._network = network
         self._routes = routes
+        self._turn_lines = turn_lines
         self._max_turn = max(
             (t for path in routes.values() for _, t in path), default=0
         )
@@ -137,6 +144,12 @@ class Visualizer(arcade.Window):
             bold=True,
             font_name="Consolas",
         )
+        self._log_text_objects: list[arcade.Text] = [
+            arcade.Text(
+                "", 0, 0, arcade.color.ELECTRIC_CYAN, 10, font_name="Consolas"
+            )
+            for _ in range(LOG_MAX_LINES)
+        ]
 
     def _safe_load_texture(self, path: str) -> arcade.Texture | None:
         """
@@ -456,9 +469,39 @@ class Visualizer(arcade.Window):
         self._hud_state_text.y = panel_y - 48
         self._hud_state_text.draw()
 
+    def _visible_log_lines(self) -> list[str]:
+        """
+        Return the last LOG_MAX_LINES turn-log lines up to the current turn.
+        """
+        current_int_turn = int(self._current_turn)
+        visible = [
+            line for turn, line in self._turn_lines if turn <= current_int_turn
+        ]
+        return visible[-LOG_MAX_LINES:]
+
+    def _draw_log(self) -> None:
+        """
+        Draw a scrolling terminal-style log of simulation turns, bottom-left.
+        """
+        lines = self._visible_log_lines()
+        panel_h = LOG_MAX_LINES * LOG_LINE_HEIGHT + 16
+        panel_x, panel_y = 14, 14
+
+        for i, text_obj in enumerate(self._log_text_objects):
+            text_obj.text = lines[i] if i < len(lines) else ""
+            text_obj.x = panel_x + 10
+            text_obj.y = panel_y + panel_h - 20 - i * LOG_LINE_HEIGHT
+            text_obj.draw()
+
+            for i, text_obj in enumerate(self._log_text_objects):
+                text_obj.text = lines[i] if i < len(lines) else ""
+                text_obj.x = panel_x + 10
+                text_obj.y = panel_y + panel_h - 20 - i * LOG_LINE_HEIGHT
+                text_obj.draw()
+
     def on_draw(self) -> None:
         """
-        Render one full frame: background, connections, zones, drones, HUD
+        Render one full frame: background, connections, zones, drones, HUD, log
         """
         self.clear()
         self._draw_background()
@@ -466,6 +509,7 @@ class Visualizer(arcade.Window):
         self._draw_zones()
         self._draw_drones()
         self._draw_hud()
+        self._draw_log()
 
     def on_update(self, delta_time: float) -> None:
         """Advance the animation clock, move the current turn toward its target
@@ -554,8 +598,10 @@ class Visualizer(arcade.Window):
 
 
 def run_visualizer(
-    network: Network, routes: dict[str, list[tuple[Zone, int]]]
+    network: Network,
+    routes: dict[str, list[tuple[Zone, int]]],
+    turn_lines: list[tuple[int, str]],
 ) -> None:
     """Create and run the graphical visualizer until the window is closed."""
-    Visualizer(network, routes)
+    Visualizer(network, routes, turn_lines)
     arcade.run()

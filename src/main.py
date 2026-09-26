@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:15:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/21 12:33:20 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/26 21:06:19 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -71,15 +71,16 @@ def main() -> None:
         sys.exit(1)
 
     try:
+        engine = SimulationEngine(routes, parsedmap, reservation_table)
+
         if args.gui:
             from visualizer import run_visualizer
 
-            engine = SimulationEngine(routes, parsedmap, reservation_table)
             for line in engine.generate_turns():
                 print(line)
-            run_visualizer(parsedmap, routes)
+            turn_lines = engine.get_turn_lines()
+            run_visualizer(parsedmap, routes, turn_lines)
         else:
-            engine = SimulationEngine(routes, parsedmap, reservation_table)
             for line in engine.generate_turns():
                 print(line)
     except Exception as e:
