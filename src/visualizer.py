@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/16 07:45:52 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/26 21:14:24 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/26 22:18:28 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -29,7 +29,7 @@ DRONE_ANIM_FPS = 8
 MIN_ZOOM = 0.3
 MAX_ZOOM = 3.0
 ZOOM_STEP = 1.1
-LOG_MAX_LINES = 8
+LOG_MAX_LINES = 1
 LOG_LINE_HEIGHT = 16
 LOG_PANEL_WIDTH = 460
 
@@ -146,7 +146,7 @@ class Visualizer(arcade.Window):
         )
         self._log_text_objects: list[arcade.Text] = [
             arcade.Text(
-                "", 0, 0, arcade.color.ELECTRIC_CYAN, 10, font_name="Consolas"
+                "", 0, 0, arcade.color.NEON_GREEN, 10, font_name="Consolas"
             )
             for _ in range(LOG_MAX_LINES)
         ]
