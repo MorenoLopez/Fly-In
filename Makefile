@@ -6,7 +6,7 @@
 #    By: horarivo <horarivo@student.42antananari    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/08 16:01:04 by horarivo          #+#    #+#              #
-#    Updated: 2026/09/21 11:41:59 by horarivo         ###   ########.fr        #
+#    Updated: 2026/09/21 12:58:06 by horarivo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ install:
 	uv sync
 
 run:
-	uv run src/main.py --map data/maps/easy_linear.txt --gui
+	uv run src/main.py --map data/maps/hell.txt --gui
 
 run-cli:
 	uv run src/main.py --map data/maps/test.txt
