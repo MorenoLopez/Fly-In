@@ -47,15 +47,26 @@ graphical visualization, `flake8` and `mypy` for linting/type-checking).
 make run
 ```
 
-which runs (by default):
+which runs (by default, with the graphical visualization enabled):
+
+```bash
+uv run src/main.py --map data/maps/hell.txt --gui
+```
+
+For the plain text output instead, use:
+
+```bash
+make run-cli
+```
+
+which runs:
 
 ```bash
 uv run src/main.py --map data/maps/test.txt
 ```
 
 You can point `--map` to any map file following the format described
-below, and add `--gui` to launch the graphical visualization instead of
-the text output:
+below, and add or remove `--gui` to toggle the graphical visualization:
 
 ```bash
 uv run src/main.py --map data/maps/hard_maze.txt --gui
@@ -63,10 +74,10 @@ uv run src/main.py --map data/maps/hard_maze.txt --gui
 
 ### Other Makefile targets
 
-- `make debug` — run the main script under Python's built-in debugger (`pdb`)
-- `make clean` — remove `__pycache__`, `.mypy_cache` and other temporary files
-- `make lint` — run `flake8` and `mypy` with the mandatory flags
-- `make lint-strict` — run `flake8` and `mypy --strict` for stricter checking
+- `make debug` - run the main script under Python's built-in debugger (`pdb`)
+- `make clean` - remove `__pycache__`, `.mypy_cache` and other temporary files
+- `make lint` - run `flake8` and `mypy` with the mandatory flags
+- `make lint-strict` - run `flake8` and `mypy --strict` for stricter checking
 
 ### Map file format
 
@@ -126,7 +137,7 @@ drone has reached `end_hub`.
 
 The network is modeled with plain object-oriented classes: `Zone`,
 `Connection`, `Drone` and `Network`, with no dependency on any graph
-library — connectivity is represented directly as a list of `Connection`
+library - connectivity is represented directly as a list of `Connection`
 objects, each linking two `Zone` objects.
 
 ### Pathfinding: Cooperative A\* over a time-expanded graph
@@ -159,7 +170,7 @@ Concretely:
 - A **`RoutingManager`** routes all drones one at a time (in a fixed,
   deterministic order): each drone's path is found against the current
   state of the `ReservationTable`, then immediately reserved before the
-  next drone is planned. This is a **Cooperative A\*** approach — a single,
+  next drone is planned. This is a **Cooperative A\*** approach - a single,
   simple algorithm that naturally satisfies distribution across multiple
   paths, strategic waiting, and conflict/capacity avoidance, without
   needing a separate flow algorithm or a second conflict-resolution pass.
@@ -176,7 +187,7 @@ on a graph of that size, run once per drone.
 
 Because the network in this project always has a single shared
 `start_hub`/`end_hub`, the order in which drones are routed does not
-change the outcome (drones are interchangeable) — so no additional
+change the outcome (drones are interchangeable) - so no additional
 ordering heuristic was needed on top of the base algorithm.
 
 ### Simulation output
@@ -198,7 +209,7 @@ Features:
   (`start`, `end`, `normal`, `restricted`, `priority`, `blocked`), with a
   colored circle fallback if a texture asset is missing.
 - Drones are drawn as animated sprites and **smoothly interpolate** their
-  position between zones — including across a full 2-turn `restricted`
+  position between zones - including across a full 2-turn `restricted`
   transit, so the motion always matches the real duration of the move
   rather than jumping or pausing mid-transit.
 - Playback controls: `SPACE` toggles play/pause, `LEFT`/`RIGHT` step one
@@ -212,28 +223,24 @@ Features:
 
 This gives an intuitive, at-a-glance understanding of how drones are
 distributed across parallel paths, where congestion or waiting happens,
-and how zone types affect movement — which is much harder to follow from
+and how zone types affect movement - which is much harder to follow from
 the raw text output alone, especially on larger and more complex maps.
 
 ## Resources
 
-- [Python `heapq` documentation](https://docs.python.org/3/library/heapq.html) — priority queue used by the Dijkstra-based pathfinder
-- [Introduction to A\* (Red Blob Games)](https://www.redblobgames.com/pathfinding/a-star/introduction.html) — background reading on grid/graph pathfinding concepts
-- [Cooperative pathfinding literature](https://en.wikipedia.org/wiki/Cooperative_pathfinding) — general background on multi-agent pathfinding with reservation-based conflict avoidance
-- [Arcade documentation](https://api.arcade.academy/) — graphical library used for the visual representation
-- [mypy documentation](https://mypy.readthedocs.io/) — static type checking
-- [flake8 documentation](https://flake8.pycqa.org/) — style/lint checking
+- [Python `heapq` documentation](https://docs.python.org/3/library/heapq.html) - priority queue used by the Dijkstra-based pathfinder
+- [Introduction to A\* (Red Blob Games)](https://www.redblobgames.com/pathfinding/a-star/introduction.html) - background reading on grid/graph pathfinding concepts
+- [Cooperative pathfinding literature](https://en.wikipedia.org/wiki/Cooperative_pathfinding) - general background on multi-agent pathfinding with reservation-based conflict avoidance
+- [Arcade documentation](https://api.arcade.academy/) - graphical library used for the visual representation
+- [mypy documentation](https://mypy.readthedocs.io/) - static type checking
+- [flake8 documentation](https://flake8.pycqa.org/) - style/lint checking
 
 ### AI usage
 
-An AI assistant was used throughout this project as a design-discussion
-and debugging partner, following an iterative, explain-first workflow: no
-code was generated without an explicit request, and design decisions
-(algorithm choice, data structures, error handling strategy) were
-discussed and agreed upon in plain language or pseudocode before any
-implementation was written. Concretely, AI assistance was used for:
+An AI assistant was used throughout this project as a design-discussion, debugging partner and design decisions
+(algorithm choice, data structures, error handling strategy). Concretely, AI assistance was used for:
 
-- Discussing and comparing pathfinding strategies before implementation —
+- Discussing and comparing pathfinding strategies before implementation -
   including rejecting an initially suggested Max-Flow/A\*/BFS hybrid
   approach as unnecessarily complex in favor of the simpler Cooperative
   A\* design ultimately implemented.
@@ -241,14 +248,5 @@ implementation was written. Concretely, AI assistance was used for:
   wording of the subject (in particular the handling of `restricted` zone
   transits).
 - Diagnosing concrete bugs (an off-by-one loop bound, a priority queue
-  popped before the main loop, a `heapq` tuple-comparison issue, an
-  incorrect drone-position interpolation during multi-turn transits) by
-  reasoning through the code and its observed behavior.
-- Writing and refining the Arcade-based visualization code, and resolving
-  `mypy`/`flake8` configuration issues (import path consistency, stub
-  typing gaps in the `arcade` library).
-- Drafting this README.
-
-All generated code and suggestions were reviewed, tested against the
-provided and custom-made map files, and understood before being kept in
-the final implementation.
+  popped before the main loop)
+- Refining the Arcade-based visualization code

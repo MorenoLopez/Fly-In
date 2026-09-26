@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/15 14:24:19 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/26 21:16:57 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/26 21:30:09 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -32,7 +32,7 @@ class SimulationEngine:
         self._routes = routes
         self._network = network
         self._reservation_table = reservation_table
-        self._verbose: bool = True
+        self._verbose: bool = False
 
     def generate_turns(self) -> list[str]:
         """Return the simulation output as one line per turn."""
