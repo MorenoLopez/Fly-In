@@ -7,7 +7,7 @@
 #   By: horarivo <horarivo@student.42antananarivo.   +#+  +:+       +#+       #
 #                                                  +#+#+#+#+#+   +#+          #
 #   Created: 2026/09/08 16:15:20 by horarivo            #+#    #+#            #
-#   Updated: 2026/09/26 21:06:19 by horarivo           ###   ########.fr      #
+#   Updated: 2026/09/26 21:19:35 by horarivo           ###   ########.fr      #
 #                                                                             #
 # ########################################################################### #
 
@@ -76,8 +76,6 @@ def main() -> None:
         if args.gui:
             from visualizer import run_visualizer
 
-            for line in engine.generate_turns():
-                print(line)
             turn_lines = engine.get_turn_lines()
             run_visualizer(parsedmap, routes, turn_lines)
         else:
